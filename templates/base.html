@@ -19,6 +19,16 @@
     <!-- /CSS Styles -->
 </head>
 <body>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <!-- Header -->
 <section id="header">
     <!-- Top NavBar -->
@@ -57,8 +67,12 @@
                 <div class="col-12 col-md-4">
                     <div class="row">
                         <div class="col-12 col-md-7 col-lg-6 text-center" id="btn-login-register">
-                            <a href="./login.html">ورود</a> /
-                            <a href="./register.html">عضویت</a>
+                            {% if request.user.is_authenticated %}
+                            <a href="#">{{ profile.first_name }} {{ profile.last_name }}</a>
+                            {% else %}
+                                <a href={% url 'accounts:login' %}>ورود</a> /
+                                <a href={% url 'accounts:signup' %}>عضویت</a>
+                            {% endif %}
                         </div>
                         <div class="col-12 col-md-5 col-lg-6">
                             <a href="./cart.html">
@@ -152,15 +166,20 @@
                                             <li class="droopmenu-parent" aria-haspopup="true">
                                                 <a href="profile/personal-info.html" aria-expanded="false">پروفایل کاربری<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="register.html">عضویت در سایت</a></li>
-                                                    <li><a href="login.html">ورود به سایت</a></li>
-                                                    <li><a href="forget-password.html">بازنشانی رمز عبور</a></li>
-                                                    <li class="dm-bottom-separator"></li>
-                                                    <li><a href="profile/personal-info.html">مشخصات کاربری</a></li>
-                                                    <li><a href="profile/factors.html">سفارشات</a></li>
-                                                    <li><a href="profile/factor-view.html">مشاهده فاکتور</a></li>
-                                                    <li><a href="profile/addresses.html">آدرس ها</a></li>
-                                                    <li><a href="profile/favorites.html">علاقه مندی ها</a></li>
+                                                    {% if request.user.is_authenticated %}
+                                                        <li class="dm-bottom-separator"></li>
+                                                        <li><a href={% url 'accounts:view-profile' %}>مشخصات کاربری</a></li>
+                                                        <li><a href="profile/factors.html">سفارشات</a></li>
+                                                        <li><a href={% url 'accounts:addresses' %}>آدرس ها</a></li>
+                                                        <li><a href="profile/favorites.html">علاقه مندی ها</a></li>
+                                                        <li><a href="{% url 'accounts:logout' %}">خروج از حساب کاربری</a></li>
+                                                    {% else %}
+                                                        <li><a href="{% url 'accounts:signup' %}">عضویت در سایت</a></li>
+                                                        <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
+                                                        <li><a href="forget-password.html">بازنشانی رمز عبور</a></li>
+                                                        <li class="dm-bottom-separator"></li>
+                                                    {% endif %}
+     
                                                 </ul>
                                             </li>
                                         </ul>
@@ -277,6 +296,46 @@
 <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
 <script src="{% static 'assets/js/pagination.js' %}"></script>
 <script src="{% static 'assets/js/scripts.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        setTimeout(() => {
+          alert.style.transition = 'opacity 0.5s';
+          alert.style.opacity = '0';
+          setTimeout(() => alert.remove(), 500);
+        }, 3000); // حذف پیام بعد از 3 ثانیه
+      });
+    });
+  </script>
+  <script>
+    document.getElementById('province').addEventListener('change', function() {
+      const provinceId = this.value;
+      const citySelect = document.getElementById('city');
+      
+      citySelect.innerHTML = '<option value="">در حال بارگذاری...</option>';
+      
+      if (provinceId) {
+        fetch(`get-cities/?province_id=${provinceId}`)
+          .then(response => response.json())
+          .then(data => {
+            citySelect.innerHTML = '<option value="">شهر را انتخاب کنید</option>';
+            data.forEach(city => {
+              const option = document.createElement('option');
+              option.value = city.id;
+              option.textContent = city.name;
+              citySelect.appendChild(option);
+            });
+          })
+          .catch(error => {
+            citySelect.innerHTML = '<option value="">خطا در بارگذاری شهرها</option>';
+          });
+      } else {
+        citySelect.innerHTML = '<option value="">ابتدا استان را انتخاب کنید</option>';
+      }
+    });
+    </script>
 <!-- /Scripts -->
 </body>
 </html>
