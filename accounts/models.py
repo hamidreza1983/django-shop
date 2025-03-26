@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -18,9 +19,7 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)  # هش کردن پسورد
-        print(f"Password before hashing: {password}")  # مشاهده رمز عبور قبل از هش
         user.set_password(password)
-        print(f"Password after hashing: {user.password}")  # مشاهده رمز عبور بعد از هش
         user.save(using=self._db)
         return user
 
@@ -62,6 +61,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+# def validate_mobile(value):
+#     if value and Profile.objects.filter(mobile=value).exists():
+#         raise ValidationError('این شماره قبلا استفاده شده است')
+    
+# def validate_idcode(value):
+#     if value and Profile.objects.filter(id_code=value).exists():
+#         raise ValidationError('این کد ملی قبلا استفاده شده است')
+
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -76,6 +83,7 @@ class Profile(models.Model):
     mobile = models.CharField(
         max_length=11,
         validators=[mobile_validator],
+        unique=True
 
     )
     id_code_validator = RegexValidator(
@@ -85,6 +93,7 @@ class Profile(models.Model):
     id_code = models.CharField(
         max_length=10,
         validators=[id_code_validator],
+        unique=True
     )
     phone_validator = RegexValidator(
         regex=r'^0[1-8]\d{9}$',
@@ -105,12 +114,15 @@ class Profile(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_edited = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.email
     
     def get_addresses(self):
         return self.addresses.all()
+    
+
 
 class Province(models.Model):
     name = models.CharField(max_length=20)
@@ -141,5 +153,5 @@ class UserAddress(models.Model):
     
     
     def __str__(self):
-        return str(self.postal_code)
+        return str(self.profile.user.email) + ' - ' + str(self.city.name) + ' - ' + str(self.province.name)
     

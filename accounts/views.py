@@ -50,6 +50,18 @@ class Login(FormView):
 class SignUp(CreateView):
     template_name = 'registrations/signup.html'
     form_class = SignUpForm
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        email = data.get('email')
+        if User.objects.filter(email=email).exists():
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                'این ایمیل قبلا ثبت نام شده است'
+            )
+            return redirect(self.request.path_info)
+        return super().post(request, *args, **kwargs)
     
     def form_valid(self, form):
         form.save()
@@ -70,7 +82,7 @@ class SignUp(CreateView):
         messages.add_message(
             self.request,
             messages.ERROR,
-            'داده های ورودی نامعتبر میباشد',
+            'پسورد باید با حروف لاتین، 8 کارکتر ، ترکیبی از حروف بزرگ و کوچک و علائم باشد',
         )
         return redirect(self.request.path_info)
 
@@ -90,27 +102,42 @@ class ViewProfile(LoginRequiredMixin, TemplateView):
     template_name = 'registrations/view-profile.html'
     
 
-class EditProfile(LoginRequiredMixin, UpdateView):
+class EditProfile(LoginRequiredMixin, TemplateView):
     template_name = 'registrations/edit-profile.html'
-    model = Profile
-    fields = ['first_name', 'last_name', 'birthday', 'mobile', 'phone', 'card_number', 'id_code']
     success_url = '/accounts/view-profile/'
-
+    form_class = EditProfile
+   
     def get(self, request, *args, **kwargs):
         user = self.request.user
         if kwargs.get("pk") != user.id: # اگر کاربر در حال ویرایش پروفایل خودش نباشد
             messages.error(self.request, "شما مجاز به ویرایش این پروفایل نیستید")
             return redirect('/')
         return super().get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        profile = Profile.objects.get(user=request.user)
+        mobile = profile.mobile
+        id_code = profile.id_code
+        form = self.form_class(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
+            return redirect(self.success_url)
+        else:
+            messages.error(self.request, "کد ملی یا موبایل تکراری میباشد")
+            return redirect(request.path_info)
 
-    def form_valid(self, form):
-        messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
-        return super().form_valid(form)
 
-    def form_invalid(self, form):
-        messages.error(self.request, f"{form.errors}")# ارورهایی که در ولیدیتور مدل نوشته شده برمیگرداند
-        return super().form_invalid(form)
-
+    
+    # def form_valid(self, form):
+    #     messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
+    #     return super().form_valid(form)
+    
+    # def form_invalid(self, form):
+    #     messages.error(self.request, "شماره موبایل یا کد ملی قبلا توسط کاربر دیگری استفاده شده")
+    #     return super().form_invalid(form)
+    
+          
 class SetAddressView(LoginRequiredMixin, CreateView):
     template_name = 'registrations/addresses.html'
     form_class = SetAddressForm
@@ -146,7 +173,6 @@ class SetAddressView(LoginRequiredMixin, CreateView):
 
 def get_cities(request):
     province_id = request.GET.get('province_id')
-    print (province_id)
     if province_id:
         cities = City.objects.filter(province=province_id).values('id', 'name')
         return JsonResponse(list(cities), safe=False)

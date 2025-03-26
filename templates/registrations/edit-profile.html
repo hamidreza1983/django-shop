@@ -33,46 +33,80 @@
                         <div class="col-12 col-lg-5 text-center">
                             <img src="{% static 'assets/images/edit-profile.png' %}" alt="">
                         </div>
+                        {% if profile.is_edited %}
                         <div class="col-12 col-lg-7 pt-5 pt-md-0 align-self-center">
                             <div class="title">ویرایش نمایید</div>
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="نام"> نام :</label>
-                                    <input type="text" name="first_name" class="form-control" value="{{ profile.first_name }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="نام خانوادگی"> نام خانوادگی :</label>
-                                    <input type="text" name="last_name" class="form-control" value="{{ profile.last_name }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="تلفن ثابت"> کد ملی :</label>
-                                    <input type="text" name="id_code" class="form-control" value="{{ profile.id_code }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">پست الکترونیک :</label>
-                                    <input type="email" name="email" class="form-control" value="{{ profile.user.email }}" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="موبایل"> موبایل :</label>
-                                    <input type="text" name="mobile" class="form-control" value="{{ profile.mobile }}">
-                                </div> 
-                                <div class="form-group">
-                                    <label for="شماره کارت"> شماره کارت :</label>
-                                    <input type="text" name="card_number" class="form-control" value="{{ profile.card_number }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="تاریخ تولد"> تاریخ تولد :</label>
-                                    <input type="date" name="birthday" class="form-control" value="{{ profile.birthday|date:'Y-m-d'|default:'' }}">
-                                </div>
-                                <div class="form-group">
-                                    <label for="تلفن ثابت"> تلفن ثابت  :</label>
-                                    <input type="text" name="phone" class="form-control" value="{{ profile.phone }}">
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" value=" ویرایش مشخصات کاربری" class="btn btn-success">
-                                </div>
-                            </form>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="نام"> نام :</label>
+                                        <input type="text" name="first_name" class="form-control" value="{{ profile.first_name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="نام خانوادگی"> نام خانوادگی :</label>
+                                        <input type="text" name="last_name" class="form-control" value="{{ profile.last_name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="شماره کارت"> شماره کارت :</label>
+                                        <input type="text" name="card_number" class="form-control" value="{{ profile.card_number }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="تاریخ تولد"> تاریخ تولد :</label>
+                                        <input type="date" name="birthday" class="form-control" value="{{ profile.birthday|date:'Y-m-d'|default:'' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="تلفن ثابت"> تلفن ثابت  :</label>
+                                        <input type="text" name="phone" class="form-control" value="{{ profile.phone }}">
+                                    </div>
+                                    <input type="hidden" name="mobile" class="form-control" value="{{ profile.mobile }}">
+                                    <input type="hidden" name="id_code" class="form-control" value="{{ profile.id_code }}">
+                                    <input type="hidden" id="isEdited" name="is_edited" value="true">
+                                    <div class="form-group">
+                                        <input type="submit" value=" ویرایش مشخصات کاربری" class="btn btn-success">
+                                    </div>     
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                            <div class="col-12 col-lg-7 pt-5 pt-md-0 align-self-center">
+                                <div class="title">ویرایش نمایید</div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="نام"> نام :</label>
+                                        <input type="text" name="first_name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="نام خانوادگی"> نام خانوادگی :</label>
+                                        <input type="text" name="last_name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="کد ملی"> کد ملی : (فقط بار اول قابلیت ویرایش دارد )</label>
+                                        <input type="text" name="id_code" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="موبایل"> موبایل : (فقط بار اول قابلیت ویرایش دارد )</label>
+                                        <input type="text" name="mobile" class="form-control" required>
+                                    </div> 
+                                    <div class="form-group">
+                                        <label for="شماره کارت"> شماره کارت :</label>
+                                        <input type="text" name="card_number" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="تاریخ تولد"> تاریخ تولد :</label>
+                                        <input type="date" name="birthday" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="تلفن ثابت"> تلفن ثابت  :</label>
+                                        <input type="text" name="phone" class="form-control">
+                                    </div>
+                                    <input type="hidden" id="isEdited" name="is_edited" value="true">
+                                    <div class="form-group">
+                                        <input type="submit" value=" ویرایش مشخصات کاربری" class="btn btn-success">
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
