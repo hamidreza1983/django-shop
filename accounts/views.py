@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (
     TemplateView,
     CreateView,
-    UpdateView,
     FormView,
 )
 from .forms import *
@@ -263,3 +262,38 @@ class ResetPasswordConfirm(FormView):
 
 class ResetPasswordComplete(TemplateView):
     template_name = 'registrations/forget-password-complete.html'
+
+class ChangePassword(LoginRequiredMixin, FormView):
+    template_name = 'registrations/change-password.html'
+    form_class = ChangePasswordForm
+    success_url = '/accounts/view-profile/'
+
+    def form_valid(self, form):
+        old_password = form.cleaned_data['old_password']
+        user = self.request.user
+        if not user.check_password(old_password):
+            messages.error(self.request, "پسورد قدیمی صحیح نمیباشد")
+            return redirect(self.request.path_info)
+        password1 = form.cleaned_data['password1']
+        password2 = form.cleaned_data['password2']
+        if password1 == password2:
+            try:
+                validate_password(password1)
+            except Exception as e:
+                messages.error(self.request, "پسورد باید 8 کارکتر شامل حروف بزرگ و کوچک و علائم باشد  ")
+                return redirect(self.request.path_info)
+            user.set_password(password1)
+            user.save()
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                'رمز عبور با موفقیت تغییر یافت'
+            )
+            return super().form_valid(form)
+        else:
+            messages.error(self.request, "پسوردها با هم مطابقت ندارند")
+            return redirect(self.request.path_info)
+        
+    def form_invalid(self, form):
+        messages.error(self.request, f"{form.errors}")
+        return redirect(self.request.path_info)

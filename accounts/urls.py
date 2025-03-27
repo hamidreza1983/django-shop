@@ -15,4 +15,5 @@ urlpatterns = [
     path('reset-password-confirm/<str:token>/', ResetPasswordConfirm.as_view(), name='reset-password-confirm'),
     path('reset-password-complete/', ResetPasswordComplete.as_view(), name='reset-password-complete'),
     path('profile/addresses/get-cities/', get_cities, name='get_cities'),
+    path('change-password/', ChangePassword.as_view(), name='change-password'),
 ]

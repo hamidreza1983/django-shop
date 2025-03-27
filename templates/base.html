@@ -148,21 +148,17 @@
                                                     <li><a href="./blog-post.html">داخلی بلاگ</a></li>
                                                 </ul>
                                             </li>
+                                            {% if request.user.is_authenticated %}
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="#" aria-expanded="false">سایر صفحات<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href="#" aria-expanded="false">اطلاعات خرید<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     <li><a href="./compare.html">مقایسه محصول</a></li>
                                                     <li><a href="./cart.html">سبد خرید</a></li>
                                                     <li><a href="./checkout.html">پیش فاکتور</a></li>
                                                     <li><a href="./thankyou.html">پرداخت موفق</a></li>
-                                                    <li class="dm-bottom-separator"></li>
-                                                    <li><a href="./login.html">ورود به سایت</a></li>
-                                                    <li><a href="./register.html">عضویت در سایت</a></li>
-                                                    <li><a href="./reset-password.html">بازگردانی رمز عبور</a></li>
-                                                    <li class="dm-bottom-separator"></li>
-                                                    <li><a href="./error-404.html">خطای 404</a></li>
                                                 </ul>
                                             </li>
+                                            {% endif %}
                                             <li class="droopmenu-parent" aria-haspopup="true">
                                                 <a href="profile/personal-info.html" aria-expanded="false">پروفایل کاربری<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
