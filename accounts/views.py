@@ -12,6 +12,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from .models import City
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from threading import Thread
+from .concurrency_processing import send_email
+from django.contrib.auth.password_validation import validate_password
 
 # Create your views here.
 class Login(FormView):
@@ -39,6 +43,8 @@ class Login(FormView):
                 'کلمه کاربری یا پسورد اشتباه است',
             )
             return redirect(self.request.path_info)
+    
+
     def form_invalid(self, form):
         messages.add_message(
             self.request,
@@ -105,7 +111,7 @@ class ViewProfile(LoginRequiredMixin, TemplateView):
 class EditProfile(LoginRequiredMixin, TemplateView):
     template_name = 'registrations/edit-profile.html'
     success_url = '/accounts/view-profile/'
-    form_class = EditProfile
+    form_class = EditProfileForm
    
     def get(self, request, *args, **kwargs):
         user = self.request.user
@@ -118,25 +124,31 @@ class EditProfile(LoginRequiredMixin, TemplateView):
         profile = Profile.objects.get(user=request.user)
         mobile = profile.mobile
         id_code = profile.id_code
-        form = self.form_class(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
-            return redirect(self.success_url)
-        else:
-            messages.error(self.request, "کد ملی یا موبایل تکراری میباشد")
+        if mobile == '' and id_code == '':
+            form = self.form_class(request.POST, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
+                return redirect(self.success_url)
+            else:
+                messages.error(self.request, "کد ملی یا موبایل تکراری میباشد")
+                return redirect(request.path_info)
+        elif request.POST.get('mobile') != mobile:
+            messages.error(self.request, "موبایل قابلیت ویرایش مجدد ندارد")
             return redirect(request.path_info)
-
-
-    
-    # def form_valid(self, form):
-    #     messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
-    #     return super().form_valid(form)
-    
-    # def form_invalid(self, form):
-    #     messages.error(self.request, "شماره موبایل یا کد ملی قبلا توسط کاربر دیگری استفاده شده")
-    #     return super().form_invalid(form)
-    
+        elif request.POST.get('id_code') != id_code:
+            messages.error(self.request, "کد ملی قابلیت ویرایش مجدد ندارد")
+            return redirect(request.path_info)
+        else:
+            form = self.form_class(request.POST, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(self.request, "پروفایل شما با موفقیت ویرایش شد.")
+                return redirect(self.success_url)
+            else:
+                messages.error(self.request, "کد ملی یا موبایل تکراری میباشد")
+                return redirect(request.path_info)
+  
           
 class SetAddressView(LoginRequiredMixin, CreateView):
     template_name = 'registrations/addresses.html'
@@ -180,13 +192,74 @@ def get_cities(request):
 
 
 class ResetPassword(FormView):
-    pass
+    success_url = '/accounts/reset-password-done/'
+    template_name = 'registrations/forget-password.html'
+    form_class = ResetPasswordForm
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            token = self.get_token_for_user(user)
+            t1 = Thread(target=send_email, args=('email/email.html', user, token, "admin@my-site.com", user.email))
+            t1.start()
+            # send email with token
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                'ایمیل بازیابی رمز عبور ارسال شد'
+            )
+            return super().form_valid(form)
+        else:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                'این ایمیل در سیستم وجود ندارد'
+            )
+            return redirect(self.request.path_info)
+        
+    
+    def get_token_for_user(self, user):
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
 
 class ResetPasswordDone(TemplateView):
-    pass
+    template_name = 'registrations/forget-password-done.html'
 
 class ResetPasswordConfirm(FormView):
-    pass
+    template_name = 'registrations/forget-password-confirm.html'
+    form_class = ResetPasswordConfirmForm
+    success_url = '/accounts/reset-password-complete/'
+
+    def form_valid(self, form):
+        password1 = form.cleaned_data['password1']
+        password2 = form.cleaned_data['password2']
+
+        if password1 == password2:
+            try:
+                validate_password(password1)
+            except Exception as e:
+                messages.error(self.request, "پسورد باید 8 کارکتر شامل حروف بزرگ و کوچک و علائم باشد  ")
+                return redirect(self.request.path_info)
+            token = self.kwargs.get('token')
+            try:
+                access_token = AccessToken(token)
+                user_id = access_token['user_id']
+                user = User.objects.get(id=user_id)
+                user.set_password(password1)
+                user.save()
+                messages.add_message(
+                    self.request,
+                    messages.SUCCESS,
+                    'رمز عبور با موفقیت تغییر یافت'
+                )
+                return super().form_valid(form)
+            except Exception as e:
+                messages.error(self.request, "توکن منقضی شده اسن  ")
+                return redirect('/accounts/reset-password/')
+        else:
+            messages.error(self.request, "پسوردها با هم مطابقت ندارند")
+            return redirect(self.request.path_info)
 
 class ResetPasswordComplete(TemplateView):
-    pass
+    template_name = 'registrations/forget-password-complete.html'

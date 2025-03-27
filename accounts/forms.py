@@ -22,9 +22,16 @@ class SetAddressForm(forms.ModelForm):
         model = UserAddress
         fields = ['profile', 'province', 'city', 'complete_address', 'postal_code', 'receiver']
 
-class EditProfile(forms.ModelForm):
+class EditProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'birthday', 'mobile', 'phone', 'card_number', 'id_code', 'is_edited']
+
+class ResetPasswordForm(forms.Form):
+    email = forms.EmailField(max_length=150, label='Email')
+
+class ResetPasswordConfirmForm(forms.Form):
+    password1 = forms.CharField(widget=forms.PasswordInput, label='New Password')
+    password2 = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
 
 

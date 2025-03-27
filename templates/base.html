@@ -176,7 +176,7 @@
                                                     {% else %}
                                                         <li><a href="{% url 'accounts:signup' %}">عضویت در سایت</a></li>
                                                         <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
-                                                        <li><a href="forget-password.html">بازنشانی رمز عبور</a></li>
+                                                        <li><a href="{% url 'accounts:reset-password' %}">بازنشانی رمز عبور</a></li>
                                                         <li class="dm-bottom-separator"></li>
                                                     {% endif %}
      

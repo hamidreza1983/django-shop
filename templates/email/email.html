@@ -1,0 +1,19 @@
+{% extends "mail_templated/base.tpl" %}
+
+{% block subject %}
+ روبیک مارکت ، بازیابی رمز عبور
+{% endblock %}
+
+{% block html %}
+<p> اگر شما درخواستی نداده اید از این پیام صرف نظر کنید </p>
+<p>  لینک زیر تا 5 دقیقه معتبر میباشد  </p>
+<p> برای بازیابی رمز عبور بر روی دکمه زیر کلیک کنید  </p>
+<a href="http://127.0.0.1:8000/accounts/reset-password-confirm/{{token}}" style="display: inline-block;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;">بازیابی رمز عبور </a>
+{% endblock %}
