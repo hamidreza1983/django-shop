@@ -3,3 +3,5 @@ python-dotenv
 psycopg2-binary
 djangorestframework-simplejwt
 django-mail-templated
+pillow
+jdatetime

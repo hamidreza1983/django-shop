@@ -37,9 +37,9 @@
             <div class="row">
                 <div class="col-8 d-none d-md-block">
                     <ul>
-                        <li><a href="./index.html">صفحه نخست</a></li>
-                        <li><a href="./about.html">درباره ما</a></li>
-                        <li><a href="./contact.html">تماس با ما</a></li>
+                        <li><a href={% url 'root:home' %}>صفحه نخست</a></li>
+                        <li><a href={% url 'root:aboutus' %}>درباره ما</a></li>
+                        <li><a href={% url 'root:contactus' %}>تماس با ما</a></li>
                     </ul>
                 </div>
                 <div class="col-12 col-md-4 text-center text-md-end" id="top-support-info">
@@ -125,7 +125,7 @@
                                                     </li>
                                                 </ul>
                                             </li>
-                                            <li><a href="./about.html">درباره ما<em class="droopmenu-topanim"></em></a></li>
+                                            <li><a href={% url 'root:aboutus' %}>درباره ما<em class="droopmenu-topanim"></em></a></li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
                                                 <a href="./products.html" aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
@@ -138,14 +138,13 @@
                                                 <a href="./contact.html" aria-expanded="false">تماس با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     <li><a href="./faq.html">سوالات متداول</a></li>
-                                                    <li><a href="./contact.html">تماس با ما</a></li>
+                                                    <li><a href={% url 'root:contactus' %}>تماس با ما</a></li>
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
                                                 <a href="./blog.html" aria-expanded="false">بلاگ آموزشی<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="./blog.html">آرشیو مطالب</a></li>
-                                                    <li><a href="./blog-post.html">داخلی بلاگ</a></li>
+                                                    <li><a href={% url 'blog:blog' %}>آرشیو مطالب</a></li>
                                                 </ul>
                                             </li>
                                             {% if request.user.is_authenticated %}

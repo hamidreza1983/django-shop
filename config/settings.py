@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'root',
     'accounts',
     'mail_templated',
+    'blog',
 ]
 
 MIDDLEWARE = [
