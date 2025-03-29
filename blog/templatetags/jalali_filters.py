@@ -14,3 +14,8 @@ def to_jalali(value):
     date = jalali_date.strftime("%d %B %Y").split()
     print(mounts.index(date[1]))
     return date[0] + " / " +  str(mounts.index(date[1])) + " / " + date[2]
+
+
+@register.filter
+def times(number):
+    return range(number)

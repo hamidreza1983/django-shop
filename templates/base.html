@@ -127,22 +127,21 @@
                                             </li>
                                             <li><a href={% url 'root:aboutus' %}>درباره ما<em class="droopmenu-topanim"></em></a></li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="./products.html" aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href={% url 'product:products' %} aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="./products.html">محصولات <sup>(کاشی کاری)</sup></a></li>
-                                                    <li><a href="./products-list.html">محصولات <sup>(لیست)</sup></a></li>
-                                                    <li><a href="./products.html">جزئیات محصول</a></li>
+                                                    <li><a href={% url 'product:products' %}>محصولات <sup>(کاشی کاری)</sup></a></li>
+                                                    <li><a href={% url 'product:products-list' %}>محصولات <sup>(لیست)</sup></a></li>
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="./contact.html" aria-expanded="false">تماس با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href={% url 'root:contactus' %} aria-expanded="false">ارتباط با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     <li><a href={% url 'root:faq' %}>سوالات متداول</a></li>
                                                     <li><a href={% url 'root:contactus' %}>تماس با ما</a></li>
                                                 </ul>
                                             </li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="./blog.html" aria-expanded="false">بلاگ آموزشی<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href={% url 'blog:blog' %} aria-expanded="false">بلاگ آموزشی<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     <li><a href={% url 'blog:blog' %}>آرشیو مطالب</a></li>
                                                 </ul>
@@ -159,7 +158,7 @@
                                             </li>
                                             {% endif %}
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href="profile/personal-info.html" aria-expanded="false">پروفایل کاربری<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href={% url 'accounts:view-profile' %} aria-expanded="false">پروفایل کاربری<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     {% if request.user.is_authenticated %}
                                                         <li class="dm-bottom-separator"></li>
