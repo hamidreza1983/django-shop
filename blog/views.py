@@ -20,6 +20,11 @@ class BlogView(ListView):
         if self.kwargs.get('tag'):
             return Blog.objects.filter(tags__name=self.kwargs['tag'], status=True).order_by('-created_at')
         return Blog.objects.filter(status=True).order_by('-created_at')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
+        return context
 
 class BlogDetataiView(DetailView):
     model = Blog
@@ -36,6 +41,7 @@ class BlogDetataiView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tags'] = BlogTags.objects.all()
+        context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
         return context
     
 class CreateReplayView(FormView):

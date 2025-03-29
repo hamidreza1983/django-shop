@@ -33,3 +33,11 @@ class AboutUsView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['team'] = Team.objects.all()
         return context
+    
+class FaqView(TemplateView):
+    template_name = 'root/faq.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['faqs'] = Faq.objects.filter(status=True)
+        return context
