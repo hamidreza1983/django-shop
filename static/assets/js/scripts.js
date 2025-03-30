@@ -23,8 +23,12 @@ $(function() {
 
     /* On Sale Counter */
     function countDown(){
+        var elTimeCounter = document.querySelector(".time-counter"); // گرفتن عنصر HTML
+        var endDateStr = elTimeCounter.getAttribute("data-end-date"); // گرفتن مقدار data-end-date
+        var eventDate = new Date(endDateStr); // تبدیل مقدار به Date
+
+
         var today = new Date();
-        var eventDate = new Date("November 30,2025 00:00:00"); /* Change This Date To Update Counter */
         var currentTime = today.getTime();
         var eventTime = eventDate.getTime();
         var remTime = eventTime - currentTime;

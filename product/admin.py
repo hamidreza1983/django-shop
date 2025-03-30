@@ -10,5 +10,6 @@ admin.site.register(ProductsColor)
 admin.site.register(ProductScore)
 admin.site.register(Attribute)
 admin.site.register(Guarantee)
+admin.site.register(SpecialOffer)
 
 # Register your models here.

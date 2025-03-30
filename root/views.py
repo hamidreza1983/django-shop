@@ -4,9 +4,10 @@ from django.views.generic import (
     CreateView,
     FormView,
 )
+from django.utils import timezone
 from django.contrib import messages
 from .forms import *
-from product.models import Products
+from product.models import SpecialOffer, Products
 from blog.models import Blog
 
 
@@ -16,10 +17,20 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["selected_products"] = Products.objects.all().order_by("-total_favorites")[:4]
-        context["discounted_products"] = Products.objects.all().order_by("discount_price")[:4]
-        context["popular_products"] = Products.objects.all().order_by("total_views")[:4]
-        context["best_selling_products"] = Products.objects.all().order_by("total_sold")[:12]
+        context["discounted_products"] = Products.objects.all().order_by("-discount_price")[:4]
+        context["popular_products"] = Products.objects.all().order_by("-total_views")[:4]
+        context["best_selling_products"] = Products.objects.all().order_by("-total_sold")[:12]
+        special_offers = SpecialOffer.objects.filter(start_date__lte=timezone.now(),
+                                          end_date__gte=timezone.now()).order_by("-product__discount_price")
+        # این بخش را در جاوا اسکریپت هندل کردیم اما برای مواقعی که نخواستیم 
+        # از جاوا اسکریپت  استفاده کنیم
+        #special_offers_list = list(special_offers)  
+        #for offer in special_offers_list:
+        #    offer.remaining = offer.remaining_time()
 
+        #context["special_offers"] = special_offers_list
+        context['blogs'] = Blog.objects.filter(status=True).order_by('-created_at')[:3]
+        context["special_offers"] = special_offers
         return context
 
 

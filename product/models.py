@@ -1,5 +1,7 @@
 from django.db import models
 from accounts.models import Profile, User
+from django.utils import timezone
+from datetime import timedelta
 
 # Create your models here.
 
@@ -44,11 +46,11 @@ class Products(models.Model):
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     has_discount = models.BooleanField(default=False)
-    discount_price = models.PositiveBigIntegerField(null=True, blank=True)
+    discount_price = models.PositiveBigIntegerField(default=0)
     stock = models.PositiveIntegerField(default=0)
     available = models.BooleanField(default=True)
     price = models.PositiveBigIntegerField()
-    color = models.ManyToManyField(ProductsColor, null=True, blank=True)  # Many-to-many relationship with ProductsColor
+    color = models.ManyToManyField(ProductsColor, blank=True)  # Many-to-many relationship with ProductsColor
     image = models.ImageField(upload_to='products/')
     # ویژگی‌های اضافی
     total_sold = models.PositiveIntegerField(default=0)
@@ -139,4 +141,28 @@ class Guarantee(models.Model):
 
     def __str__(self):
         return f"{self.product.name} guarantee {self.mounts} mounts"
+    
+class SpecialOffer(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
+    def is_active(self):
+        now = timezone.now()
+        return self.start_date <= now <= self.end_date
+    
+    def remaining_time(self):
+        """محاسبه زمان باقی‌مانده به صورت دیکشنری"""
+        remaining = self.end_date - timezone.now()
+        
+        if remaining.total_seconds() < 0:
+            return {"days": 0, "hours": 0, "minutes": 0, "seconds": 0}
+        
+        days = remaining.days
+        hours, remainder = divmod(remaining.seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return {"days": days, "hours": hours, "minutes": minutes, "seconds": seconds}
+    
+    def __str__(self):
+        return self.product.name
 
