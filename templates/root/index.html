@@ -90,7 +90,15 @@
                                 &nbsp;/&nbsp;
                             </div>
                             <a href="./product.html"><h2>{{product.name}}</h2></a>
-                            <div class="price">{{product.price|intcomma}} تومان </div>
+                                {% if product.has_discount %}
+                                <div>
+                                    <span class="discounted">{{product.price}} تومان</span>
+                                    <br class="d-sm-none">
+                                    <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
+                                </div>
+                                {% else %}
+                                <div class="price">{{product.price}} تومان</div>
+                                {% endif %}
                             <div class="rate">
                                 {% for star in product.get_average_score|times %}
                                 <i class="fa fa-star"></i>
@@ -160,7 +168,7 @@
                         <div>
                             <span class="discounted">{{product.price}} تومان</span>
                             <br class="d-sm-none">
-                            <span class="price">{{product.get_discounted_price}} تومان</span>
+                            <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
                         </div>
                         {% else %}
                         <div class="price">{{product.price}} تومان</div>
@@ -202,9 +210,12 @@
                                 <div class="product-title pt-4">{{item.product.name}}</div>
                             </a>
                             <div class="price py-2">
-                                <span class="discounted">{{item.product.get_discount_price}} تومان</span>
-                                <br class="d-sm-none">
                                 <span class="pre">{{item.product.price}} تومان</span>
+                                <br class="d-sm-none">
+                                <span class="discounted">{{item.product.get_discounted_price}} تومان</span>
+                                <br>
+                                <span class="discounted">{{item.product.discount_price}}% تخفیف شگفت انگیز</span>
+                                
                             </div>
                             <div class="cta pt-2">
                                 <a href="./product.html" class="hvr-icon-back">همین حالا بخرید <i class="fa fa-arrow-left hvr-icon"></i></a>
@@ -212,19 +223,19 @@
                             <div class="counter mt-3">
                                 <div class="time-counter" data-end-date="{{ item.end_date|date:'Y-m-d H:i:s' }}">
                                         <div class="seconds count">
-                                            <div class="num">00</div>
+                                            <div class="num"></div>
                                             <div class="label">ثانیه</div>
                                         </div>
                                         <div class="minutes count">
-                                            <div class="num">00</div>
+                                            <div class="num"></div>
                                             <div class="label">دقیقه</div>
                                         </div>
                                         <div class="hours count">
-                                            <div class="num">00</div>
+                                            <div class="num"></div>
                                             <div class="label">ساعت</div>
                                         </div>
                                         <div class="days count">
-                                            <div class="num">00</div>
+                                            <div class="num"></div>
                                             <div class="label">روز</div>
                                         </div>
                                     </div>

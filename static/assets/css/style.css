@@ -68,6 +68,17 @@ section .section-subtitle {
   font-size: 16px;
   text-align: center;
 }
+.price-range {
+  font-size: 16px;
+}
+
+.price-range div {
+  display: inline-block;
+}
+
+.mx-2 {
+  margin: 0 8px;
+}
 section#header #top-nav {
   font-size: 13px;
   line-height: 32px;

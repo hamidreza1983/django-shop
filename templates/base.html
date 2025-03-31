@@ -114,7 +114,7 @@
                                                                         {% for big_child in parent.subcategories.all %}
                                                                         <li><h4>{{big_child.name}}</h4></li>
                                                                             {% for child in big_child.subcategories.all %}
-                                                                                <li><a href="./products.html">{{child.name}} </a></li>
+                                                                                <li><a href="{% url 'product:products-list-detail' %}?detail-category={{child.name}}">{{child.name}} </a></li>
                                                                             {% endfor %}
                                                                         {% endfor %}
                                                                     </ul>
@@ -173,7 +173,6 @@
                                                         <li><a href="{% url 'accounts:reset-password' %}">بازنشانی رمز عبور</a></li>
                                                         <li class="dm-bottom-separator"></li>
                                                     {% endif %}
-     
                                                 </ul>
                                             </li>
                                         </ul>
@@ -292,16 +291,68 @@
 <script src="{% static 'assets/js/scripts.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const alerts = document.querySelectorAll('.alert');
-      alerts.forEach(alert => {
-        setTimeout(() => {
-          alert.style.transition = 'opacity 0.5s';
-          alert.style.opacity = '0';
-          setTimeout(() => alert.remove(), 500);
-        }, 3000); // حذف پیام بعد از 3 ثانیه
-      });
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("price-filter-form");
+    
+        if (!form) {
+            return;
+        }
+    
+        var minPriceElement = document.getElementById("price-range-from");
+        var maxPriceElement = document.getElementById("price-range-to");
+        var minPriceInput = document.getElementById("min-price");
+        var maxPriceInput = document.getElementById("max-price");
+        var slider = document.getElementById("steps-slider");
+    
+        if (!minPriceElement || !maxPriceElement || !minPriceInput || !maxPriceInput || !slider) {
+            return;
+        }
+    
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // افزودن کاما برای نمایش
+        }
+    
+        function removeCommas(num) {
+            return num.toString().replace(/,/g, ""); // حذف کاما برای ارسال به سرور
+        }
+    
+        function updatePriceInputs(min, max) {
+            minPriceElement.innerText = formatNumber(min);
+            maxPriceElement.innerText = formatNumber(max);
+            minPriceInput.value = removeCommas(min);
+            maxPriceInput.value = removeCommas(max);
+        }
+    
+        if (!slider.noUiSlider) {
+            noUiSlider.create(slider, {
+                start: [parseInt(minPriceInput.value), parseInt(maxPriceInput.value)],
+                connect: true,
+                range: {
+                    min: 10000,
+                    max: 5000000
+                },
+                format: {
+                    to: function (value) {
+                        return formatNumber(value.toFixed(0)); // نمایش عدد با کاما
+                    },
+                    from: function (value) {
+                        return parseInt(removeCommas(value)); // حذف کاما هنگام مقداردهی اولیه
+                    }
+                }
+            });
+    
+            slider.noUiSlider.on("update", function (values) {
+                updatePriceInputs(values[0], values[1]);
+            });
+        }
+    
+        // هنگام ارسال فرم، مقدار ارسالی را بدون کاما بفرست
+        form.addEventListener("submit", function () {
+            minPriceInput.value = removeCommas(minPriceElement.innerText);
+            maxPriceInput.value = removeCommas(maxPriceElement.innerText);
+        });
     });
+    
   </script>
   <script>
     document.getElementById('province').addEventListener('change', function() {

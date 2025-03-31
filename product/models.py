@@ -63,7 +63,7 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name
-    
+       
     def get_comments(self):
         return self.comments.filter(status=True)
     
@@ -84,8 +84,9 @@ class Products(models.Model):
         return self.specifications.all()
     
     def get_discounted_price(self):
-        price = str(int(self.price) - (int(self.price)*int(self.discount_price)/100))
-        return price
+        price = (int(self.price) - (int(self.price)*int(self.discount_price)/100))
+        price = round(price)
+        return str(price)
 
     
 class ProductAttribute(models.Model):

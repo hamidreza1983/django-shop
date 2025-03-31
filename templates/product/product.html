@@ -1,8 +1,202 @@
-{% extends "base.html" %}
 {% load static %}
-{% load jalali_filters %}
-{% block 'title' %}product{% endblock 'title' %}
-{% block 'content' %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>product-detail</title>
+    <!-- CSS Styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.rtl.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/aos-master/dist/aos.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/hover-master/css/hover-min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/ionicons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/droopmenu.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/highlight.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/nouislider.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/product-gallery.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/default-skin/default-skin.min.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <!-- /CSS Styles -->
+</head>
+<body>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+<!-- Header -->
+<section id="header">
+    <!-- Top NavBar -->
+    <div id="top-nav">
+        <div class="container">
+            <div class="row">
+                <div class="col-8 d-none d-md-block">
+                    <ul>
+                        <li><a href={% url 'root:home' %}>صفحه نخست</a></li>
+                        <li><a href={% url 'root:aboutus' %}>درباره ما</a></li>
+                        <li><a href={% url 'root:contactus' %}>تماس با ما</a></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-4 text-center text-md-end" id="top-support-info">
+                    <span>تلفن مشاوره و فروش: 09351234567</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Top NavBar -->
+    <!-- Search NavBar -->
+    <div id="search-nav">
+        <div class="container pt-1">
+            <div class="row py-3 align-content-center">
+                <div class="col-12 col-md-3 col-xl-2 text-center text-md-start pb-2" id="header-logo">
+                    <a href="./index.html">
+                        <img src="{% static 'assets/images/logo.png' %}" alt=""> روبیک مارکت
+                    </a>
+                </div>
+                <div class="col-12 col-md-5 col-xl-6">
+                    <div id="search-bar">
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="جستجو کنید...">
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="row">
+                        <div class="col-12 col-md-7 col-lg-6 text-center" id="btn-login-register">
+                            {% if request.user.is_authenticated %}
+                            <a href="#">{{ profile.first_name }} {{ profile.last_name }}</a>
+                            {% else %}
+                                <a href={% url 'accounts:login' %}>ورود</a> /
+                                <a href={% url 'accounts:signup' %}>عضویت</a>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 col-md-5 col-lg-6">
+                            <a href="./cart.html">
+                                <div class="btn btn-warning w-100"><i class="fa fa-shopping-cart"></i>&nbsp;<span class="d-md-none d-lg-inline-block">سبد خرید</span> (2)</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Search NavBar -->
+    <!-- Main NavBar -->
+    <div id="main-nav">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="droopmenu-navbar dmarrow-down droopmenu-horizontal dmpos-top dmfade">
+                        <div class="droopmenu-inner">
+                            <div class="droopmenu-header">
+                                <a href="#" class="droopmenu-toggle"><i class="dm-burg"></i></a>
+                                <span class="d-md-none">منوی فروشگاه</span>
+                            </div>
+                            <!-- Header Mega Menu-->
+                            <div class="droopmenu-nav">
+                                <div class="droopmenu-nav-wrap">
+                                    <div class="droopmenu-navi">
+                                        <ul class="droopmenu">
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href="#" aria-expanded="false"><i class="fa fa-bars"></i>&nbsp;&nbsp;گروه های محصولات<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul class="droopmenu-grid droopmenu-grid-9">
+                                                    <li class="droopmenu-tabs droopmenu-tabs-vertical">
+                                                        {% for parent in parents %}
+                                                        <div class="droopmenu-tabsection droopmenu-tab-active" id="droopmenutab10">
+                                                            <a class="droopmenu-tabheader" href="#">{{ parent.name }}</a>
+                                                            <div class="droopmenu-tabcontent">
+                                                                <div class="droopmenu-row"> 
+                                                                    <ul class="droopmenu-col droopmenu-col4">
+                                                                        {% for big_child in parent.subcategories.all %}
+                                                                        <li><h4>{{big_child.name}}</h4></li>
+                                                                            {% for child in big_child.subcategories.all %}
+                                                                                <li><a href="{% url 'product:products-list-detail' %}?detail-category={{child.name}}">{{child.name}} </a></li>
+                                                                            {% endfor %}
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            li><a href={% url 'root:aboutus' %}>درباره ما<em class="droopmenu-topanim"></em></a></li>
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href="./products.html" class="active" aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul style="">
+                                                    <li><a href={% url 'product:products' %}>محصولات <sup>(کاشی کاری)</sup></a></li>
+                                                    <li><a href={% url 'product:products-list' %}>محصولات <sup>(لیست)</sup></a></li>>
+                                                </ul>
+                                            </li>
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href={% url 'root:contactus' %} aria-expanded="false">ارتباط با فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul style="">
+                                                    <li><a href={% url 'root:faq' %}>سوالات متداول</a></li>
+                                                    <li><a href={% url 'root:contactus' %}>تماس با ما</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href={% url 'blog:blog' %} aria-expanded="false">بلاگ آموزشی<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul style="">
+                                                    <li><a href={% url 'blog:blog' %}>آرشیو مطالب</a></li>
+                                                </ul>
+                                            </li>
+                                            {% if request.user.is_authenticated %}
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href="#" aria-expanded="false">اطلاعات خرید<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul style="">
+                                                    <li><a href="./compare.html">مقایسه محصول</a></li>
+                                                    <li><a href="./cart.html">سبد خرید</a></li>
+                                                    <li><a href="./checkout.html">پیش فاکتور</a></li>
+                                                    <li><a href="./thankyou.html">پرداخت موفق</a></li>
+                                                </ul>
+                                            </li>
+                                            {% endif %}
+                                            <li class="droopmenu-parent" aria-haspopup="true">
+                                                <a href={% url 'accounts:view-profile' %} aria-expanded="false">پروفایل کاربری<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <ul style="">
+                                                    {% if request.user.is_authenticated %}
+                                                        <li class="dm-bottom-separator"></li>
+                                                        <li><a href={% url 'accounts:view-profile' %}>مشخصات کاربری</a></li>
+                                                        <li><a href="profile/factors.html">سفارشات</a></li>
+                                                        <li><a href={% url 'accounts:addresses' %}>آدرس ها</a></li>
+                                                        <li><a href="profile/favorites.html">علاقه مندی ها</a></li>
+                                                        <li><a href="{% url 'accounts:logout' %}">خروج از حساب کاربری</a></li>
+                                                    {% else %}
+                                                        <li><a href="{% url 'accounts:signup' %}">عضویت در سایت</a></li>
+                                                        <li><a href="{% url 'accounts:login' %}">ورود به سایت</a></li>
+                                                        <li><a href="{% url 'accounts:reset-password' %}">بازنشانی رمز عبور</a></li>
+                                                        <li class="dm-bottom-separator"></li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Header Menu Menu -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main NavBar -->
+</section>
+<!-- /Header -->
+
 <section class="inner-page" id="product-page">
     <div class="container-fluid" id="page-hero">
         <div class="row">
@@ -130,7 +324,7 @@
                                     <div class="col-12 col-sm-4 col-lg-3">
                                         <div class="variable">
                                             <div class="sub-title pt-2 pb-3">رنگ</div>
-                                            <span class="color-variable"><a href="#" class="red"></a></span>
+                                            <span class="color-variable"><a href="#" style="background-color: #000000;"></a></span>
                                             <span class="color-variable"><a href="#" class="yellow"></a></span>
                                             <span class="color-variable"><a href="#" class="blue"></a></span>
                                             <span class="color-variable"><a href="#" class="black"></a></span>
@@ -456,4 +650,110 @@
     </div>
 </section>
 
-{% endblock 'content' %}
+<!-- Footer -->
+<section class="pt-4 pb-3" id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-sm-4 col-lg-2">
+                <div class="title">دسترسی سریع</div>
+                <ul>
+                    <li><a href="./blog.html">بلاگ آموزشی</a></li>
+                    <li><a href="./faq.html">راهنمای خرید</a></li>
+                    <li><a href="./faq.html">شیوه های پرداخت</a></li>
+                    <li><a href="./contact.html">پیگیری سفارش</a></li>
+                    <li><a href="./faq.html">سوالات متداول</a></li>
+                    <li><a href="./about.html">درباره ما</a></li>
+                    <li><a href="./contact.html">تماس با ما</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-4 col-lg-2">
+                <div class="title">گروه های محصولات</div>
+                <ul>
+                    <li><a href="./products.html">تجهیزات کامپیوتر</a></li>
+                    <li><a href="./products.html">گوشی موبایل</a></li>
+                    <li><a href="./products.html">جانبی موبایل</a></li>
+                    <li><a href="./products.html">ساعت هوشمند</a></li>
+                    <li><a href="./products.html">جانبی کامپیوتر</a></li>
+                    <li><a href="./products.html">دوربین</a></li>
+                    <li><a href="./products.html">لپ تاپ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-4 col-lg-2 d-none d-sm-inline-block">
+                <div class="title">ناحیه کاربری</div>
+                <ul>
+                    <li><a href="./login.html">ورود به سایت</a></li>
+                    <li><a href="./register.html">عضویت در سایت</a></li>
+                    <li><a href="./reset-password.html">بازیابی رمز عبور</a></li>
+                    <li><a href="./cart.html">سبد خرید</a></li>
+                    <li><a href="./checkout.html">پیش فاکتور</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-12 col-lg-6">
+                <hr class="d-lg-none">
+                <img src="{% static 'assets/images/logo.png' %}" alt=""> روبیک مارکت
+                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.</p>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-center p-2" id="support-info">
+                        <div>7 روز هفته، 24 ساعت شبانه روز</div>
+                        <div>پاسخگوی شما هستیم</div>
+                        <div>09351234567</div>
+                    </div>
+                    <div class="col-12 col-md-6 pt-2 pt-md-0" id="certificates">
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/enamad.png' %}" alt=""></a>
+                            </div>
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/samandehi.png' %}" alt=""></a>
+                            </div>
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/etehadiye.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /Footer -->
+
+<!-- Copyright -->
+<section class="py-2" id="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-6" id="social-links">
+                <span>ما را دنبال کنید</span>
+                <a href="#"><img src="{% static 'assets/images/social/insta.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'assets/images/social/facebook.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'assets/images/social/linkedin.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'assets/images/social/twitter.png' %}" alt=""></a>
+                <a href="#"><img src="{% static 'assets/images/social/youtube.png' %}" alt=""></a>
+            </div>
+            <div class="col-12 col-sm-6 text-sm-end pt-2 pt-sm-0">
+                <span>کلیه حقوق و مادی معنوی محفوط است.</span>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Copyright -->
+
+<!-- Scripts -->
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/plugins/fontawesome/js/all.min.js' %}"></script>
+<script src="{% static 'assets/plugins/aos-master/dist/aos.js' %}"></script>
+<script src="{% static 'assets/js/droopmenu.js' %}"></script>
+<script src="{% static 'assets/js/nouislider.min.js' %}"></script>
+<script src="{% static 'assets/js/pagination.js' %}"></script>
+<script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'assets/js/nav-tabs.js' %}"></script>
+<script src="{% static 'assets/js/swiper-bundle.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe-ui-default.min.js' %}"></script>
+<script src="{% static 'assets/js/product-gallery.js' %}"></script>
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- /Scripts -->
+</body>
+</html>
