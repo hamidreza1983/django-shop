@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load jalali_filters %}
+{% block 'title' %}compare{% endblock 'title' %}
+{% block 'content' %}
+<section class="inner-page" id="contact-page">
+    <div class="container-fluid" id="page-hero">
+        <div class="row">
+            <div class="col-12">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 px-0">
+                            <h1>مقایسه محصول</h1>
+                            <p>محصولات را با هم مقایسه کنید.</p>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="./index.html">صفحه نخست</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">مقایسه محصول</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-none d-lg-block" id="compare-table">
+        <div class="row">
+            <div class="col-12">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="products-compared">
+                                <div class="row mt-2 bg-white">
+                                    {% for compare in compares %}
+                                    <div class="col-3 px-2 pb-2 products-compare-item">
+                                        <div class="bg-light p-2 text-center">
+                                            <a href="#" class="remove-from-compare" data-id="{{ compare.product.id }}"><div class="btn btn-sm btn-outline-secondary btn-cancel-compare float-left rounded-circle">X</div></a>
+                                            <div><img src={{compare.product.image.url}} alt=""></div>
+                                            <div class="title">{{compare.product.name}}</div>
+                                            <div class="price-container">
+                                                {% if compare.product.has_discount %}
+                                                    <div class="price">{{compare.product.get_discounted_price|intcomma}} تومان</div>
+                                                    {% else %}
+                                                    <div class="price">{{compare.product.price}} تومان</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="cta-container">
+                                                <a href={% url 'product:product-detail' pk=compare.product.id %}>
+                                                    <a href={% url 'product:product-detail' pk=compare.product.id %}><div class="btn btn-sm btn-primary px-3 px-lg-2 px-xl-4">مشاهده و خرید محصول</div></a>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="compare-table-details">
+                        <div class="col-12 px-lg-0 compare-detail">
+                            {% for compare in compares %}
+                                <div class="bg-light-yellow px-2 py-1 rounded compare-specs" data-id="{{ compare.product.id }}">
+                                    <span class="detail-title"><i class="fa fa-chevron-left small"></i> {{compare.product.name}}</span>
+                                </div>
+                                {% for spec in compare.product.get_specifications %}
+                                    <div class="row mb-2 compare-specs" data-id="{{ compare.product.id }}">
+                                        <div class="col-12 col-md-3 px-2"><div class="bg-light p-2">{{spec.attribute.name}} : {{spec.value}}</div></div>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="mobile-forbidden" class="d-lg-none">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="container px-lg-0">
+                        <div class="row mb-0 mb-sm-5">
+                            <div class="col-12 px-0">
+                                <div class="row">
+                                    <div class="col-12 p-5 text-center">
+                                        <span>این صفحه در موبایل قابل مشاهده نمی باشد.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock 'content' %}

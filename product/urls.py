@@ -11,4 +11,6 @@ urlpatterns = [
     path('list/price-range/', ProductsList.as_view(), name='products-list-by-price-range'),
     path('list/with-guarantee/', ProductsList.as_view(), name='products-list-by-guarantee'),
     path('detail/<int:pk>/', ProductDetailView.as_view(), name='product-detail'),
+    path('add-comment/<int:pk>/', ProductCommentView.as_view(), name='product-comment'),
+    path('add-replay/<int:pk>/', ProductReplayView.as_view(), name='add-replay'),
 ]

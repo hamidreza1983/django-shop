@@ -42,26 +42,17 @@
                                     </h2>
                                     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
+                                            <form action="{% url 'product:products-list-by-category' %}">
+                                            {% for parent in parents %}
                                             <div class="form-group">
-                                                <input type="checkbox" id="category1">
-                                                <label for="category1">گوشی موبایل</label>
+                                                <input type="checkbox" id="category{{parent.id}}" name="category" value="{{ parent.id }}">
+                                                <label for="category1">{{parent.name}} </label>
                                             </div>
+                                            {% endfor %}
                                             <div class="form-group">
-                                                <input type="checkbox" id="category2">
-                                                <label for="category2">جانبی موبایل</label>
+                                                <input type="submit" value="اعمال فیلتر" class="col-12 text-center py-2">
                                             </div>
-                                            <div class="form-group">
-                                                <input type="checkbox" id="category3">
-                                                <label for="category3">دوربین دیجیتال</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="checkbox" id="category4">
-                                                <label for="category4">ساعت هوشمند</label>
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="checkbox" id="category5">
-                                                <label for="category5">لپ تاپ</label>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -80,45 +71,52 @@
                                                 <div class="col-12 py-1 px-4 mt-3">
                                                     <div id="steps-slider" dir="rtl"></div>
                                                 </div>
-                                                <div class="col-6 text-center price-range mt-3">
-                                                    <div>از</div>
-                                                    <div id="price-range-from">10000</div>
-                                                    <div>تومان</div>
-                                                </div>
-                                                <div class="col-6 text-center price-range mt-3">
-                                                    <div>از</div>
-                                                    <div id="price-range-to">500000</div>
-                                                    <div>تومان</div>
-                                                </div>
-                                                <div class="col-12 text-center py-2">
-                                                    <div class="btn btn-warning">اعمال محدوده تخفیف</div>
-                                                </div>
+                                                <form id="price-filter-form" action="{% url 'product:products-list-by-price-range' %}" method="GET">
+                                                    <div class="col-12 py-1 px-4 mt-3">
+                                                        <div id="steps-slider" dir="rtl"></div>
+                                                    </div>
+                                                
+                                                    <!-- سطر برای دو مقدار قیمت -->
+                                                    <div class="col-12 d-flex justify-content-between align-items-center mt-3">
+                                                        <!-- حداقل قیمت -->
+                                                        <div class="price-range d-flex align-items-center">
+                                                            <div>از</div>
+                                                            <div id="price-range-from" class="mx-2">10000</div>
+                                                            <input type="hidden" name="min_price" id="min-price" value="10000">  
+                                                            <div>تومان</div>
+                                                        </div>
+                                                
+                                                        <!-- حداکثر قیمت -->
+                                                        <div class="price-range d-flex align-items-center">
+                                                            <div>تا</div>
+                                                            <div id="price-range-to" class="mx-2">500000</div>
+                                                            <input type="hidden" name="max_price" id="max-price" value="500000">  
+                                                            <div>تومان</div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- دکمه ارسال -->
+                                                    <div class="col-12 text-center py-2">
+                                                        <button type="submit" class="btn btn-warning">اعمال محدوده قیمت</button>
+                                                    </div>
+                                                </form>
+                                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="accordion filters-container mt-3">
-                                <div class="accordion-item">
-                                    <div id="collapseThree" class="accordion-collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body pb-2">
-                                            <div class="form-group">
-                                                <input type="checkbox" id="only-available">
-                                                <label for="only-available">فقط کالاهای موجود</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="accordion filters-container mt-3">
                                 <div class="accordion-item">
                                     <div id="collapseFour" class="accordion-collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                         <div class="accordion-body pb-2">
                                             <div class="form-group">
-                                                <input type="checkbox" id="only-warranty">
+                                                <form action="{% url 'product:products-list-by-guarantee' %}">
+                                                    <input type="checkbox" id="only-warranty" name="guarantee" value="true">
                                                 <label for="only-warranty">فقط کالاهای دارای گارانتی</label>
+                                                <div class="form-group">
+                                                    <input type="submit" value="اعمال فیلتر" class="col-12 text-center py-2">
+                                                </div>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -135,10 +133,9 @@
                                     <div id="collapseFive" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             <div class="row">
-                                                <!-- Side Product -->
-                                                 {% for product in last_products %}
+                                                {% for product in last_products %}
                                                 <div class="col-12 col-md-4 col-lg-12 px-0 mt-2">
-                                                    <a href="./product.html">
+                                                    <a href={% url 'product:product-detail' pk=product.id %}>
                                                         <div class="side-product">
                                                             <div class="row pl-3">
                                                                 <div class="col-3 pl-2">
@@ -192,13 +189,13 @@
                                         <div class="col">
                                             <!-- Product Box -->
                                             <div class="product-box">
-                                                <a href="./product.html"><div class="image" style="background-image: url({{product.image.url}})"></div></a>
+                                                <a href={% url 'product:product-detail' pk=product.id %}><div class="image" style="background-image: url({{product.image.url}})"></div></a>
                                                 <div class="details p-3">
                                                     <div class="category">
-                                                        <a href="./products.html">{{product.category.parent}}/{{product.category.name}} </a>
+                                                        <a href="#">{{product.category.parent}}/{{product.category.name}} </a>
                                                         &nbsp;/&nbsp;
                                                     </div>
-                                                    <a href="./product.html"><h2>{{product.name}}</h2></a>
+                                                    <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                                                     <div class="price">{{product.price|intcomma}} تومان </div>
                                                     <div class="rate">
                                                         {% for star in product.get_average_score|times %}

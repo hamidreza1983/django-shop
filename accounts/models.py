@@ -121,7 +121,6 @@ class Profile(models.Model):
     
     def get_addresses(self):
         return self.addresses.all()
-    
 
 
 class Province(models.Model):

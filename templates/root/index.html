@@ -79,17 +79,17 @@
                 <div class="col">
                     <!-- Product Box -->
                     <div class="product-box">
-                        <a href="./product.html"><div class="image" style="background-image: url('{{product.image.url}}')"></div></a>
+                        <a href={% url 'product:product-detail' pk=product.id %}><div class="image" style="background-image: url('{{product.image.url}}')"></div></a>
                         <div class="icons">
                             <div class="btn btn-outline-secondary btn-favorite"></div>
                             <div class="btn btn-outline-secondary btn-compare"></div>
                         </div>
                         <div class="details p-3">
                             <div class="category">
-                                <a href="./products.html">{{product.category.parent}}/{{product.category.name}} </a>
+                                <a href="#">{{product.category.parent}}/{{product.category.name}} </a>
                                 &nbsp;/&nbsp;
                             </div>
-                            <a href="./product.html"><h2>{{product.name}}</h2></a>
+                            <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                                 {% if product.has_discount %}
                                 <div>
                                     <span class="discounted">{{product.price}} تومان</span>
@@ -119,17 +119,17 @@
             <div class="col">
                 <!-- Product Box -->
                 <div class="product-box">
-                    <a href="./product.html">
+                    <a href={% url 'product:product-detail' pk=product.id %}>
                         <div class="image" style="background-image: url({{product.image.url}})">
                             <span class="badge on-sale-badge">فروش ویژه</span>
                         </div>
                     </a>
                     <div class="details p-3">
                         <div class="category">
-                            <a href="./products.html"> {{product.category.parent}}/{{product.category.name}}</a>
+                            <a href="#"> {{product.category.parent}}/{{product.category.name}}</a>
                             &nbsp;/&nbsp;
                         </div>
-                        <a href="./product.html"><h2>{{product.name}}</h2></a>
+                        <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                         <div>
                             <span class="discounted">{{product.price}} تومان</span>
                             <br class="d-sm-none">
@@ -153,17 +153,17 @@
             <div class="col">
                 <!-- Product Box -->
                 <div class="product-box">
-                    <a href="./product.html"><div class="image" style="background-image: url({{product.image.url}})"></div></a>
+                    <a href={% url 'product:product-detail' pk=product.id %}><div class="image" style="background-image: url({{product.image.url}})"></div></a>
                     <div class="icons">
                         <div class="btn btn-outline-secondary btn-favorite"></div>
                         <div class="btn btn-outline-secondary btn-compare"></div>
                     </div>
                     <div class="details p-3">
                         <div class="category">
-                            <a href="./products.html"> {{product.category.parent}}/{{product.category.name}}</a>
+                            <a href="#"> {{product.category.parent}}/{{product.category.name}}</a>
                             &nbsp;/&nbsp;
                         </div>
-                        <a href="./product.html"><h2>{{product.name}}</h2></a>
+                        <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                         {% if product.has_discount %}
                         <div>
                             <span class="discounted">{{product.price}} تومان</span>
@@ -201,12 +201,12 @@
                 <div class="on-sale-product-box h-100 p-3" data-aos="fade-zoom-in" data-aos-duration="800">
                     <div class="row h-100">
                         <div class="col-12 col-sm-4 col-lg-5">
-                            <a href="./product.html"><div class="image h-100" style="background-image: url({{item.product.image.url}})"></div></a>
+                            <a href={% url 'product:product-detail' pk=product.id %}><div class="image h-100" style="background-image: url({{item.product.image.url}})"></div></a>
                         </div>
                         <div class="col-12 col-sm-8 col-lg-7 py-3">
                             <div class="box-title">محصول ویژه امروز</div>
                             <div class="box-subtitle">فروش به مدت محدود</div>
-                            <a href="./product.html">
+                            <a href={% url 'product:product-detail' pk=product.id %}>
                                 <div class="product-title pt-4">{{item.product.name}}</div>
                             </a>
                             <div class="price py-2">
@@ -218,7 +218,7 @@
                                 
                             </div>
                             <div class="cta pt-2">
-                                <a href="./product.html" class="hvr-icon-back">همین حالا بخرید <i class="fa fa-arrow-left hvr-icon"></i></a>
+                                <a href={% url 'product:product-detail' pk=product.id %} class="hvr-icon-back">همین حالا بخرید <i class="fa fa-arrow-left hvr-icon"></i></a>
                             </div>
                             <div class="counter mt-3">
                                 <div class="time-counter" data-end-date="{{ item.end_date|date:'Y-m-d H:i:s' }}">
@@ -299,17 +299,17 @@
             <div class="col">
                 <!-- Product Box -->
                 <div class="product-box">
-                    <a href="./product.html"><div class="image" style="background-image: url({{product.image.url}})"></div></a>
+                    <a href={% url 'product:product-detail' pk=product.id %}><div class="image" style="background-image: url({{product.image.url}})"></div></a>
                     <div class="icons">
                         <div class="btn btn-outline-secondary btn-favorite"></div>
                         <div class="btn btn-outline-secondary btn-compare"></div>
                     </div>
                     <div class="details p-3">
                         <div class="category">
-                            <a href="./products.html"> {{product.category.parent}}/{{product.category.name}}</a>
+                            <a href="#"> {{product.category.parent}}/{{product.category.name}}</a>
                             &nbsp;/&nbsp;
                         </div>
-                        <a href="./product.html"><h2>{{product.name}}</h2></a>
+                        <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                         {% if product.has_discount %}
                         <div>
                             <span class="discounted">{{product.price}} تومان</span>
@@ -339,12 +339,12 @@
 <div class="container" data-aos="fade-up" data-aos-duration="1200">
     <div class="row">
         <div class="col-12 col-md-4 pt-2 text-center">
-            <a href="./products.html">
+            <a href={% url 'product:products' %}>
                 <img src="{% static 'assets/images/promo-image1.png' %}" alt="" class="rounded-4">
             </a>
         </div>
         <div class="col-12 col-md-8 pt-2 text-center">
-            <a href="./products.html">
+            <a href={% url 'product:products' %}>
                 <img src="{% static 'assets/images/promo-image2.png' %}" alt="" class="rounded-4">
             </a>
         </div>
@@ -361,13 +361,13 @@
              {% for blog in blogs %}
             <div class="col">
                 <div class="blog-post-box" data-aos="fade-up" data-aos-duration="1000">
-                    <a href="./blog-post.html"><div class="post-image" style="background-image: url({{blog.image.url}})"></div></a>
+                    <a href={% url 'blog:blog-details' pk=blog.id %}><div class="post-image" style="background-image: url({{blog.image.url}})"></div></a>
                     <div class="details py-3 px-4">
                         <div class="post-date">{{blog.created_at|to_jalali}}</div>
-                        <a href="./blog-post.html">
+                        <a href={% url 'blog:blog-details' pk=blog.id %}>
                             <h2 class="post-title">{{blog.title}}</h2>
                         </a>
-                        <a href="./blog-post.html">
+                        <a href={% url 'blog:blog-details' pk=blog.id %}>
                             <div class="post-description">{{blog.content}}</div>
                         </a>
                         <div class="read-more"><a href="./blog-post.html" class="hvr-icon-back">بیشتر بخوانید <i class="fa fa-arrow-left hvr-icon"></i></a></div>

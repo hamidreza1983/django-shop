@@ -11,5 +11,6 @@ admin.site.register(ProductScore)
 admin.site.register(Attribute)
 admin.site.register(Guarantee)
 admin.site.register(SpecialOffer)
+admin.site.register(Compare)
 
 # Register your models here.

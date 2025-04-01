@@ -3,6 +3,7 @@ from django.views.generic import (
     TemplateView,
     CreateView,
     FormView,
+    ListView,
 )
 from .forms import *
 from .models import *
@@ -15,12 +16,19 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from threading import Thread
 from .concurrency_processing import send_email
 from django.contrib.auth.password_validation import validate_password
+from product.models import Products, Compare
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.urls import reverse_lazy
 
 # Create your views here.
 class Login(FormView):
     template_name = 'registrations/login.html'
     form_class = LoginForm
-    success_url = '/'
+    success_url = reverse_lazy('root:home')
+
+    
 
     def form_valid(self, form):
         form = form.cleaned_data
@@ -105,6 +113,11 @@ class LogOut(LoginRequiredMixin, TemplateView):
 
 class ViewProfile(LoginRequiredMixin, TemplateView):
     template_name = 'registrations/view-profile.html'
+    #برای اینکه اگر از این صفحه به لاگین ارجاع شد بعد از لاگین نکست را بیاورد 
+    # که بتواند بعد از لاگین به همان صفحه برود
+    # در ویو هایی که لاگین نیاز دارند با نوشتن این بخش بعد از لاگین به هوم نمیرود 
+    #و به همان صفحه برمیگردد
+    login_url = reverse_lazy('accounts:login')
     
 
 class EditProfile(LoginRequiredMixin, TemplateView):
@@ -297,3 +310,52 @@ class ChangePassword(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         messages.error(self.request, f"{form.errors}")
         return redirect(self.request.path_info)
+    
+class CompareView(LoginRequiredMixin,ListView):
+    template_name = 'registrations/compare.html'
+    model = Compare
+    context_object_name = 'compares'
+
+    def get_queryset(self):
+        user = self.request.user
+        profile = get_object_or_404(Profile, user=user)
+        compares = Compare.objects.filter(name=profile)
+        return compares
+
+@csrf_exempt
+def create_compare(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "message": "ابتدا وارد شوید!"}, status=400)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+        user = request.user
+        profile = get_object_or_404(Profile, user=user)
+        product = Products.objects.get(id=product_id)
+        try:
+            Compare.objects.get(name=profile, product=product)
+            return JsonResponse({"message": "این محصول قبلا اضافه شده است!"}, status=400)
+        except Compare.DoesNotExist:
+            Compare.objects.create(name=profile, product=product)
+            return JsonResponse({"message": "محصول اضافه شد!"}, status=200)
+
+    return JsonResponse({"message": "خطای نا مشخص!"}, status=400)
+
+@csrf_exempt
+def remove_compare(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "message": "ابتدا وارد شوید!"}, status=400)
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            product_id = data.get("product_id")
+            user = request.user
+            profile = get_object_or_404(Profile, user=user)
+            product = Products.objects.get(id=product_id)
+            compare = Compare.objects.get(name=profile, product=product)
+            compare.delete()
+            return JsonResponse({"success": True, "message": "محصول حذف شد!"}, status=200)
+        except Exception as e:
+            return JsonResponse({"success": False, "message": "خطایی رخ داد . یکبار صفحه را رفرش کنید!"}, status=400)
+
+    return JsonResponse({"message": "متد غیرمجاز!"}, status=405)

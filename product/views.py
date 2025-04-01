@@ -11,6 +11,7 @@ from .forms import *
 from accounts.models import Profile, User
 from django.contrib import messages
 from django.db.models import Q
+from .forms import *
 
 # Create your views here.
 class ProductsView(ListView):
@@ -73,5 +74,77 @@ class ProductDetailView(DetailView):
     context_object_name = "product"
 
     def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.total_views += 1
+        self.object.save()
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = self.object.category.name
+        context["same_products"] = self.model.objects.filter(category__name=category).order_by('created_at')[:50]
+        return context
+
+
+class ProductCommentView(CreateView):
+    form_class = ProductCommentForm
+
+    def get(self, request, *args, **kwargs):
+        product = get_object_or_404(Products, pk=kwargs['pk'])
+        return redirect(f'products/detail/{product.pk}')
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(self.request, 'ابتدا وارد شوید')
+            return redirect('accounts:login')
+        product = get_object_or_404(Products, pk=kwargs['pk'])
+        user = request.user
+        email = user.email
+        profile = Profile.objects.get(user=user)
+        form = self.get_form()
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.product = product
+            comment.name = profile
+            comment.email = email
+            comment.save()
+            messages.success(request, 'کامنت شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود')
+            return redirect('product:product-detail', pk=product.pk)
+        else:
+            return self.form_invalid(form)
+        
+    def form_invalid(self, form):
+        messages.error(self.request, 'خطا در ارسال کامنت')
+        return super().form_invalid(form)
+    
+class ProductReplayView(CreateView):
+    form_class = ProductReplayForm
+
+    def get(self, request, *args, **kwargs):
+        comment = get_object_or_404(ProductComment, pk=kwargs['pk'])
+        product = comment.product
+        return redirect(f'products/detail/{product.pk}')
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(self.request, 'ابتدا وارد شوید')
+            return redirect('accounts:login')
+        comment = get_object_or_404(ProductComment, pk=kwargs['pk'])
+        user = request.user
+        email = user.email
+        profile = Profile.objects.get(user=user)
+        form = self.get_form()
+        if form.is_valid():
+            replay = form.save(commit=False)
+            replay.comment = comment
+            replay.name = profile
+            replay.email = email
+            replay.save()
+            messages.success(request, 'پاسخ شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود')
+            return redirect('product:product-detail', pk=comment.product.pk)
+        else:
+            return self.form_invalid(form)
+        
+    def form_invalid(self, form):
+        messages.error(self.request, 'خطا در ارسال پاسخ')
+        return super().form_invalid(form)

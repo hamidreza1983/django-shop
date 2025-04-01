@@ -17,6 +17,7 @@ class Category(models.Model):
         blank=True,                 # مقدار والد می‌تواند خالی باشد
         related_name='subcategories' # دسترسی به زیر دسته‌ها با این نام ممکن می‌شود
     )
+    image = models.ImageField(upload_to='category_images', default='category.png')
 
     # نمایش رشته‌ای برای نمایش بهتر دسته‌بندی‌ها
     def __str__(self):
@@ -34,16 +35,18 @@ class Attribute(models.Model):
         return self.name
 
 class ProductsColor(models.Model):
+    product = models.ForeignKey('Products', on_delete=models.CASCADE, related_name='colors')
     name = models.CharField(max_length=100)
     hex_code = models.CharField(max_length=7)  # Hex code for the color (e.g., #FF5733)
 
     def __str__(self):
-        return self.name
+        return self.product.name + " " + self.name
 
 class Products(models.Model):
     name = models.CharField(max_length=100)
     content = models.TextField()
     description = models.TextField()
+    review = models.TextField(default="نقد بلند محصول")
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     has_discount = models.BooleanField(default=False)
     discount_price = models.PositiveBigIntegerField(default=0)
@@ -51,13 +54,17 @@ class Products(models.Model):
     available = models.BooleanField(default=True)
     price = models.PositiveBigIntegerField()
     color = models.ManyToManyField(ProductsColor, blank=True)  # Many-to-many relationship with ProductsColor
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to='products/', default='product1.jpg')
+    image2 = models.ImageField(upload_to='products/', default='product2.jpg')
+    image3 = models.ImageField(upload_to='products/', default='product3.jpg')
+    image4 = models.ImageField(upload_to='products/', default='product4.jpg')
     # ویژگی‌های اضافی
     total_sold = models.PositiveIntegerField(default=0)
     total_views = models.PositiveIntegerField(default=0)
     total_favorites = models.PositiveIntegerField(default=0)
     total_vots = models.PositiveIntegerField(default=0)
     has_guarantee = models.BooleanField(default=False)
+    has_colored = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -78,7 +85,7 @@ class Products(models.Model):
         return 0
     
     def get_guarantees(self):
-        return self.guarantees.all()
+        return self.guarantees.all().order_by('mounts')
     
     def get_specifications(self):
         return self.specifications.all()
@@ -87,6 +94,9 @@ class Products(models.Model):
         price = (int(self.price) - (int(self.price)*int(self.discount_price)/100))
         price = round(price)
         return str(price)
+    
+    def get_color(self):
+        return self.colors.all()
 
     
 class ProductAttribute(models.Model):
@@ -167,3 +177,13 @@ class SpecialOffer(models.Model):
     def __str__(self):
         return self.product.name
 
+class Compare(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    name = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name.user.email
+    
+    class Meta:
+        ordering = ['-created_at']

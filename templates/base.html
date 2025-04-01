@@ -19,16 +19,26 @@
     <!-- /CSS Styles -->
 </head>
 <body>
-{% if messages %}
-<div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show my-alert" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% endif %}
+    {% endif %}
+    
+    <script>
+        setTimeout(function () {
+            let alerts = document.querySelectorAll('.my-alert');
+            alerts.forEach(alert => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 200); // حذف از DOM بعد از افکت fade
+            });
+        }, 2000); // حذف پیام بعد از ۵ ثانیه
+    </script>    
 <!-- Header -->
 <section id="header">
     <!-- Top NavBar -->
@@ -105,7 +115,7 @@
                                                 <a href="#" aria-expanded="false"><i class="fa fa-bars"></i>&nbsp;&nbsp;گروه های محصولات<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul class="droopmenu-grid droopmenu-grid-9">
                                                     <li class="droopmenu-tabs droopmenu-tabs-vertical">
-                                                        {% for parent in parents %}
+                                                        {% for parent in parents %} 
                                                         <div class="droopmenu-tabsection droopmenu-tab-active" id="droopmenutab10">
                                                             <a class="droopmenu-tabheader" href="#">{{ parent.name }}</a>
                                                             <div class="droopmenu-tabcontent">
@@ -150,7 +160,7 @@
                                             <li class="droopmenu-parent" aria-haspopup="true">
                                                 <a href="#" aria-expanded="false">اطلاعات خرید<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
-                                                    <li><a href="./compare.html">مقایسه محصول</a></li>
+                                                    <li><a href={% url 'accounts:user-compare' %}>مقایسه محصول</a></li>
                                                     <li><a href="./cart.html">سبد خرید</a></li>
                                                     <li><a href="./checkout.html">پیش فاکتور</a></li>
                                                     <li><a href="./thankyou.html">پرداخت موفق</a></li>
@@ -380,6 +390,41 @@
         citySelect.innerHTML = '<option value="">ابتدا استان را انتخاب کنید</option>';
       }
     });
+    </script>
+    <script>
+        document.querySelectorAll(".remove-from-compare").forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                let productId = this.getAttribute("data-id");
+    
+                fetch("/accounts/remove-compare/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // حذف محصول از DOM
+                        this.closest(".products-compare-item").remove();
+
+                        document.querySelectorAll(`.compare-specs[data-id="${productId}"]`).forEach(element => {
+                            element.remove();
+                        });
+                        
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("خطا در حذف محصول:", error);
+                    alert("خطا در برقراری ارتباط با سرور!");
+                });
+            });
+        });
     </script>
 <!-- /Scripts -->
 </body>

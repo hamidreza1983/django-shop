@@ -16,4 +16,7 @@ urlpatterns = [
     path('reset-password-complete/', ResetPasswordComplete.as_view(), name='reset-password-complete'),
     path('profile/addresses/get-cities/', get_cities, name='get_cities'),
     path('change-password/', ChangePassword.as_view(), name='change-password'),
+    path('compare/', CompareView.as_view(), name='user-compare'),
+    path('create-compare/', create_compare, name='user-create-compare'),
+    path('remove-compare/', remove_compare, name='user-remove-compare'),
 ]
