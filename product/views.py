@@ -38,7 +38,9 @@ class ProductsList(ListView):
         context["product_count"] = self.model.objects.all().count()
         return context
     
-    def get_queryset(self):       
+    def get_queryset(self):
+        if self.request.GET.get('search'):
+            return Products.objects.filter(name__contains=self.request.GET.get('search'))       
         categories = self.request.GET.getlist('category')  # گرفتن لیست دسته‌بندی‌ها
         category_detail = self.request.GET.get('detail-category')
         if categories:

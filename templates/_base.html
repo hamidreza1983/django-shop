@@ -1,4 +1,6 @@
 {% load static %}
+{% load jalali_filters %}
+{% load humanize %}
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
@@ -15,6 +17,13 @@
     <link rel="stylesheet" href="{% static 'assets/css/droopmenu.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/highlight.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/nouislider.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/product-gallery.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/default-skin/default-skin.min.css' %}" />
+
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <!-- /CSS Styles -->
 </head>
@@ -29,7 +38,6 @@
         {% endfor %}
     </div>
     {% endif %}
-    
     <script>
         setTimeout(function () {
             let alerts = document.querySelectorAll('.my-alert');
@@ -38,7 +46,7 @@
                 setTimeout(() => alert.remove(), 200); // حذف از DOM بعد از افکت fade
             });
         }, 2000); // حذف پیام بعد از ۵ ثانیه
-    </script>    
+    </script>  
 <!-- Header -->
 <section id="header">
     <!-- Top NavBar -->
@@ -64,17 +72,15 @@
         <div class="container pt-1">
             <div class="row py-3 align-content-center">
                 <div class="col-12 col-md-3 col-xl-2 text-center text-md-start pb-2" id="header-logo">
-                    <a href={% url 'root:home' %}>
+                    <a href="./index.html">
                         <img src="{% static 'assets/images/logo.png' %}" alt=""> روبیک مارکت
                     </a>
                 </div>
                 <div class="col-12 col-md-5 col-xl-6">
-                    <form id="myForm" action={% url 'product:product-by-search' %}>
                     <div id="search-bar">
-                        <i class="fa fa-search"></i>     
-                        <input type="text" placeholder="جستجو کنید..." name="search">   
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="جستجو کنید...">
                     </div>
-                    </form> 
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="row">
@@ -117,7 +123,7 @@
                                                 <a href="#" aria-expanded="false"><i class="fa fa-bars"></i>&nbsp;&nbsp;گروه های محصولات<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul class="droopmenu-grid droopmenu-grid-9">
                                                     <li class="droopmenu-tabs droopmenu-tabs-vertical">
-                                                        {% for parent in parents %} 
+                                                        {% for parent in parents %}
                                                         <div class="droopmenu-tabsection" id="droopmenutab10">
                                                             <a class="droopmenu-tabheader" href="#">{{ parent.name }}</a>
                                                             <div class="droopmenu-tabcontent">
@@ -139,7 +145,7 @@
                                             </li>
                                             <li><a href={% url 'root:aboutus' %}>درباره ما<em class="droopmenu-topanim"></em></a></li>
                                             <li class="droopmenu-parent" aria-haspopup="true">
-                                                <a href={% url 'product:products' %} aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
+                                                <a href={% url 'product:products-list' %} class="active" aria-expanded="false">صفحات فروشگاه<em class="droopmenu-topanim"></em></a><div class="dm-arrow"></div>
                                                 <ul style="">
                                                     <li><a href={% url 'product:products' %}>محصولات <sup>(کاشی کاری)</sup></a></li>
                                                     <li><a href={% url 'product:products-list' %}>محصولات <sup>(لیست)</sup></a></li>
@@ -201,9 +207,11 @@
     <!-- Main NavBar -->
 </section>
 <!-- /Header -->
-{% block 'content' %}
 
-{% endblock 'content' %}
+    {% block 'content' %}
+    {% endblock 'content' %}
+
+    
 <!-- Footer -->
 <section class="pt-4 pb-3" id="footer">
     <div class="container">
@@ -300,147 +308,76 @@
 <script src="{% static 'assets/js/droopmenu.js' %}"></script>
 <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
 <script src="{% static 'assets/js/pagination.js' %}"></script>
+<script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'assets/js/nav-tabs.js' %}"></script>
+<script src="{% static 'assets/js/swiper-bundle.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.3/photoswipe-ui-default.min.js' %}"></script>
+<script src="{% static 'assets/js/product-gallery.js' %}"></script>
 <script src="{% static 'assets/js/scripts.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var form = document.getElementById("price-filter-form");
-    
-        if (!form) {
-            return;
-        }
-    
-        var minPriceElement = document.getElementById("price-range-from");
-        var maxPriceElement = document.getElementById("price-range-to");
-        var minPriceInput = document.getElementById("min-price");
-        var maxPriceInput = document.getElementById("max-price");
-        var slider = document.getElementById("steps-slider");
-    
-        if (!minPriceElement || !maxPriceElement || !minPriceInput || !maxPriceInput || !slider) {
-            return;
-        }
-    
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // افزودن کاما برای نمایش
-        }
-    
-        function removeCommas(num) {
-            return num.toString().replace(/,/g, ""); // حذف کاما برای ارسال به سرور
-        }
-    
-        function updatePriceInputs(min, max) {
-            minPriceElement.innerText = formatNumber(min);
-            maxPriceElement.innerText = formatNumber(max);
-            minPriceInput.value = removeCommas(min);
-            maxPriceInput.value = removeCommas(max);
-        }
-    
-        if (!slider.noUiSlider) {
-            noUiSlider.create(slider, {
-                start: [parseInt(minPriceInput.value), parseInt(maxPriceInput.value)],
-                connect: true,
-                range: {
-                    min: 10000,
-                    max: 5000000
+<script>
+    document.querySelectorAll(".add-to-favorites").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            let productId = this.getAttribute("data-id");
+
+            fetch("/accounts/create-favorite/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
                 },
-                format: {
-                    to: function (value) {
-                        return formatNumber(value.toFixed(0)); // نمایش عدد با کاما
-                    },
-                    from: function (value) {
-                        return parseInt(removeCommas(value)); // حذف کاما هنگام مقداردهی اولیه
-                    }
-                }
-            });
-    
-            slider.noUiSlider.on("update", function (values) {
-                updatePriceInputs(values[0], values[1]);
-            });
-        }
-    
-        // هنگام ارسال فرم، مقدار ارسالی را بدون کاما بفرست
-        form.addEventListener("submit", function () {
-            minPriceInput.value = removeCommas(minPriceElement.innerText);
-            maxPriceInput.value = removeCommas(maxPriceElement.innerText);
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => console.error("خطا در افزودن محصول:", error));
+        });
+    });
+</script>
+<script>
+    document.querySelectorAll(".add-to-compares").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            let productId = this.getAttribute("data-id");
+
+            fetch("/accounts/create-compare/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ product_id: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => console.error("خطا در افزودن محصول:", error));
         });
     });
     
-  </script>
-  <script>
-    document.getElementById('province').addEventListener('change', function() {
-      const provinceId = this.value;
-      const citySelect = document.getElementById('city');
-      
-      citySelect.innerHTML = '<option value="">در حال بارگذاری...</option>';
-      
-      if (provinceId) {
-        fetch(`get-cities/?province_id=${provinceId}`)
-          .then(response => response.json())
-          .then(data => {
-            citySelect.innerHTML = '<option value="">شهر را انتخاب کنید</option>';
-            data.forEach(city => {
-              const option = document.createElement('option');
-              option.value = city.id;
-              option.textContent = city.name;
-              citySelect.appendChild(option);
-            });
-          })
-          .catch(error => {
-            citySelect.innerHTML = '<option value="">خطا در بارگذاری شهرها</option>';
-          });
-      } else {
-        citySelect.innerHTML = '<option value="">ابتدا استان را انتخاب کنید</option>';
-      }
+</script>
+<script>
+    document.querySelectorAll('.color-choice').forEach(color => {
+        color.addEventListener('click', function(event) {
+            event.preventDefault();  // جلوگیری از تغییر صفحه
+
+            // حذف کلاس 'selected' از تمام رنگ‌ها
+            document.querySelectorAll('.color-choice').forEach(c => c.classList.remove('selected'));
+
+            // اضافه کردن کلاس 'selected' به رنگ انتخاب‌شده
+            this.classList.add('selected');
+
+            // ذخیره رنگ انتخابی در `hidden input`
+            document.getElementById('selectedColor').value = this.getAttribute('data-color');
+        });
     });
-    </script>
-    <script>
-        document.querySelectorAll(".remove-from-compare").forEach(button => {
-            button.addEventListener("click", function(event) {
-                event.preventDefault();
-                let productId = this.getAttribute("data-id");
-    
-                fetch("/accounts/remove-compare/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    body: JSON.stringify({ product_id: productId })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // حذف محصول از DOM
-                        this.closest(".products-compare-item").remove();
+</script>
 
-                        document.querySelectorAll(`.compare-specs[data-id="${productId}"]`).forEach(element => {
-                            element.remove();
-                        });
-                        
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("خطا در حذف محصول:", error);
-                    alert("خطا در برقراری ارتباط با سرور!");
-                });
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let form = document.getElementById("myForm");
-        
-            form.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                    event.preventDefault(); // جلوگیری از عملکرد پیش‌فرض (برای جلوگیری از مشکلات در برخی فرم‌ها)
-                    form.submit(); // ارسال فرم
-                }
-            });
-        });
-        </script>
-<!-- /Scripts -->
 </body>
 </html>
+<!-- Header -->

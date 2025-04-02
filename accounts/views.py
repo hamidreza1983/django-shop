@@ -16,11 +16,11 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from threading import Thread
 from .concurrency_processing import send_email
 from django.contrib.auth.password_validation import validate_password
-from product.models import Products, Compare
+from product.models import Products, Compare, Faviorites
 import json
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 class Login(FormView):
@@ -359,3 +359,52 @@ def remove_compare(request):
             return JsonResponse({"success": False, "message": "خطایی رخ داد . یکبار صفحه را رفرش کنید!"}, status=400)
 
     return JsonResponse({"message": "متد غیرمجاز!"}, status=405)
+
+
+
+
+
+
+class FavoritesView(LoginRequiredMixin, ListView):
+    template_name = 'registrations/favorites.html'
+    model = Faviorites
+    context_object_name = 'favorites'
+
+    def get_queryset(self):
+        user = self.request.user
+        profile = get_object_or_404(Profile, user=user)
+        favorires = Faviorites.objects.filter(name=profile)
+        return favorires
+
+@csrf_exempt
+def create_faviorites(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "message": "ابتدا وارد شوید!"}, status=400)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        product_id = data.get('product_id')
+        print (product_id)
+        user = request.user
+        profile = get_object_or_404(Profile, user=user)
+        product = Products.objects.get(id=product_id)
+        try:
+            Faviorites.objects.get(name=profile, product=product)
+            return JsonResponse({"message": "این محصول قبلا اضافه شده است!"}, status=400)
+        except Faviorites.DoesNotExist:
+            Faviorites.objects.create(name=profile, product=product)
+            return JsonResponse({"message": "محصول اضافه شد!"}, status=200)
+
+    return JsonResponse({"message": "خطای نا مشخص!"}, status=400)
+@login_required
+def remove_favorites(request, pk):
+    try:
+        user = request.user
+        profile = get_object_or_404(Profile, user=user)
+        product = Products.objects.get(id=pk)
+        favorite = Faviorites.objects.get(name=profile, product=product)
+        favorite.delete()
+        messages.success(request, 'محصول حذف شد')
+        return redirect('accounts:user-favorties')
+    except Exception as e:
+        messages.error(request, 'خطایی رخ داد . یکبار صفحه را رفرش کنید!')
+        return redirect('accounts:user-favorties')

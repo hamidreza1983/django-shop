@@ -18,6 +18,7 @@ class Category(models.Model):
         related_name='subcategories' # دسترسی به زیر دسته‌ها با این نام ممکن می‌شود
     )
     image = models.ImageField(upload_to='category_images', default='category.png')
+    
 
     # نمایش رشته‌ای برای نمایش بهتر دسته‌بندی‌ها
     def __str__(self):
@@ -27,6 +28,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Category"            # نام مفرد برای دسته‌بندی
         verbose_name_plural = "Categories"    # نام جمع برای دسته‌بندی‌ها
+    
+    def dynamic_id(self):
+        return self.id - 1
 
 class Attribute(models.Model):
     name = models.CharField(max_length=255)
@@ -35,12 +39,11 @@ class Attribute(models.Model):
         return self.name
 
 class ProductsColor(models.Model):
-    product = models.ForeignKey('Products', on_delete=models.CASCADE, related_name='colors')
     name = models.CharField(max_length=100)
     hex_code = models.CharField(max_length=7)  # Hex code for the color (e.g., #FF5733)
 
     def __str__(self):
-        return self.product.name + " " + self.name
+        return self.name
 
 class Products(models.Model):
     name = models.CharField(max_length=100)
@@ -64,6 +67,7 @@ class Products(models.Model):
     total_favorites = models.PositiveIntegerField(default=0)
     total_vots = models.PositiveIntegerField(default=0)
     has_guarantee = models.BooleanField(default=False)
+    guarantees = models.ManyToManyField('Guarantee', blank=True)
     has_colored = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -83,10 +87,7 @@ class Products(models.Model):
             total_score = sum([item.score for item in scores])
             return round(total_score / scores.count())
         return 0
-    
-    def get_guarantees(self):
-        return self.guarantees.all().order_by('mounts')
-    
+       
     def get_specifications(self):
         return self.specifications.all()
     
@@ -94,9 +95,6 @@ class Products(models.Model):
         price = (int(self.price) - (int(self.price)*int(self.discount_price)/100))
         price = round(price)
         return str(price)
-    
-    def get_color(self):
-        return self.colors.all()
 
     
 class ProductAttribute(models.Model):
@@ -146,12 +144,11 @@ class ProductScore(models.Model):
         return self.name.user.email
     
 class Guarantee(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name="guarantees")
     mounts = models.PositiveBigIntegerField(default=0)
     price_increase = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.product.name} guarantee {self.mounts} mounts"
+        return str(self.mounts)
     
 class SpecialOffer(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -187,3 +184,11 @@ class Compare(models.Model):
     
     class Meta:
         ordering = ['-created_at']
+
+class Faviorites(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    name = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name.user.email

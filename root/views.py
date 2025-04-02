@@ -17,7 +17,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["selected_products"] = Products.objects.all().order_by("-total_favorites")[:4]
-        context["discounted_products"] = Products.objects.all().order_by("-discount_price")[:100]
+        context["discounted_products"] = Products.objects.filter(discount_price__gt=0).order_by("-discount_price")[:100]
         context["popular_products"] = Products.objects.all().order_by("-total_views")[:4]
         context["best_selling_products"] = Products.objects.all().order_by("-total_sold")[:12]
         special_offers = SpecialOffer.objects.filter(start_date__lte=timezone.now(),

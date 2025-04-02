@@ -19,4 +19,7 @@ urlpatterns = [
     path('compare/', CompareView.as_view(), name='user-compare'),
     path('create-compare/', create_compare, name='user-create-compare'),
     path('remove-compare/', remove_compare, name='user-remove-compare'),
+    path('favorites/', FavoritesView.as_view(), name='user-favorties'),
+    path('create-favorite/', create_faviorites, name='user-create-favorites'),
+    path('remove-favorite/<int:pk>/', remove_favorites, name='user-remove-favorites'),
 ]

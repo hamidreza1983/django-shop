@@ -97,7 +97,7 @@
                                     <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
                                 </div>
                                 {% else %}
-                                <div class="price">{{product.price}} تومان</div>
+                                <div class="price">{{product.price|intcomma}} تومان</div>
                                 {% endif %}
                             <div class="rate">
                                 {% for star in product.get_average_score|times %}
@@ -131,9 +131,9 @@
                         </div>
                         <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                         <div>
-                            <span class="discounted">{{product.price}} تومان</span>
+                            <span class="discounted">{{product.price|intcomma}} تومان</span>
                             <br class="d-sm-none">
-                            <span class="price">{{product.get_discounted_price}} تومان</span>
+                            <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
                         </div>
                         <div class="rate">
                             {% for star in product.get_average_score|times %}
@@ -166,12 +166,12 @@
                         <a href={% url 'product:product-detail' pk=product.id %}><h2>{{product.name}}</h2></a>
                         {% if product.has_discount %}
                         <div>
-                            <span class="discounted">{{product.price}} تومان</span>
+                            <span class="discounted">{{product.price|intcomma}} تومان</span>
                             <br class="d-sm-none">
                             <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
                         </div>
                         {% else %}
-                        <div class="price">{{product.price}} تومان</div>
+                        <div class="price">{{product.price|intcomma}} تومان</div>
                         {% endif %}
                         <div class="rate">
                             {% for star in product.get_average_score|times %}
@@ -201,24 +201,24 @@
                 <div class="on-sale-product-box h-100 p-3" data-aos="fade-zoom-in" data-aos-duration="800">
                     <div class="row h-100">
                         <div class="col-12 col-sm-4 col-lg-5">
-                            <a href={% url 'product:product-detail' pk=product.id %}><div class="image h-100" style="background-image: url({{item.product.image.url}})"></div></a>
+                            <a href={% url 'product:product-detail' pk=item.product.id %}><div class="image h-100" style="background-image: url({{item.product.image.url}})"></div></a>
                         </div>
                         <div class="col-12 col-sm-8 col-lg-7 py-3">
                             <div class="box-title">محصول ویژه امروز</div>
                             <div class="box-subtitle">فروش به مدت محدود</div>
-                            <a href={% url 'product:product-detail' pk=product.id %}>
+                            <a href={% url 'product:product-detail' pk=item.product.id %}>
                                 <div class="product-title pt-4">{{item.product.name}}</div>
                             </a>
                             <div class="price py-2">
-                                <span class="pre">{{item.product.price}} تومان</span>
+                                <span class="pre">{{item.product.price|intcomma}} تومان</span>
                                 <br class="d-sm-none">
-                                <span class="discounted">{{item.product.get_discounted_price}} تومان</span>
+                                <span class="discounted">{{item.product.get_discounted_price|intcomma}} تومان</span>
                                 <br>
                                 <span class="discounted">{{item.product.discount_price}}% تخفیف شگفت انگیز</span>
                                 
                             </div>
                             <div class="cta pt-2">
-                                <a href={% url 'product:product-detail' pk=product.id %} class="hvr-icon-back">همین حالا بخرید <i class="fa fa-arrow-left hvr-icon"></i></a>
+                                <a href={% url 'product:product-detail' pk=item.product.id %} class="hvr-icon-back">همین حالا بخرید <i class="fa fa-arrow-left hvr-icon"></i></a>
                             </div>
                             <div class="counter mt-3">
                                 <div class="time-counter" data-end-date="{{ item.end_date|date:'Y-m-d H:i:s' }}">
@@ -314,10 +314,10 @@
                         <div>
                             <span class="discounted">{{product.price}} تومان</span>
                             <br class="d-sm-none">
-                            <span class="price">{{product.get_discounted_price}} تومان</span>
+                            <span class="price">{{product.get_discounted_price|intcomma}} تومان</span>
                         </div>
                         {% else %}
-                        <div class="price">{{product.price}} تومان</div>
+                        <div class="price">{{product.price|intcomma}} تومان</div>
                         {% endif %}
                         <div class="rate">
                             {% for star in product.get_average_score|times %}
