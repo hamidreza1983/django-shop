@@ -39,7 +39,7 @@ class AddToCartView(TemplateView):
         cart = request.session.get('cart', {})  # اگر cart وجود نداشت، مقدار پیش‌فرض {}
 
         if pid in cart:
-            cart[pid]['quantity'] += 1
+            cart[pid]['quantity'] = "1"
             cart[pid]['guarantee'] = gid
             cart[pid]['color'] = color
         else:
