@@ -75,19 +75,19 @@
                                         <hr>
                                         <div class="container">
                                             <div class="row">
-                                                <!-- Side Panel Product -->
+                                                {% for product in most_views_product %}
                                                 <div class="col-12 col-lg-12 px-0 mt-2">
                                                     <a href="./product.html">
                                                         <div class="side-blog-product">
                                                             <div class="row pl-3">
                                                                 <div class="col-4 pl-2">
-                                                                    <div class="image" style="background-image: url({% static "assets/images/products/p100.png" %})"></div>
+                                                                    <div class="image" style="background-image: url({{product.image.url}})"></div>
                                                                 </div>
                                                                 <div class="col-8 px-0">
-                                                                    <h2>گوشی موبایل سامسونگ مدل Galaxy A51 دو سیم کارت</h2>
+                                                                    <h2>{{product.name}}</h2>
                                                                     <div class="row">
                                                                         <div class="col-8 pl-0">
-                                                                            <span class="price">3.200.000 تومان</span>
+                                                                            <span class="price">{{product.get_discounted_price}}تومان</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -95,70 +95,8 @@
                                                         </div>
                                                     </a>
                                                 </div>
-                                                <!-- /Side Panel Product -->
-                                                <!-- Side Panel Product -->
-                                                <div class="col-12 col-lg-12 px-0 mt-2">
-                                                    <a href="./product.html">
-                                                        <div class="side-blog-product">
-                                                            <div class="row pl-3">
-                                                                <div class="col-4 pl-2">
-                                                                    <div class="image" style="background-image: url({% static "assets/images/products/p200.png" %})"></div>
-                                                                </div>
-                                                                <div class="col-8 px-0">
-                                                                    <h2>لپ تاپ 15 اینچی ایسوس مدل VivoBook X543MA-DM905</h2>
-                                                                    <div class="row">
-                                                                        <div class="col-8 pl-0">
-                                                                            <span class="price">3.200.000 تومان</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <!-- /Side Panel Product -->
-                                                <!-- Side Panel Product -->
-                                                <div class="col-12 col-lg-12 px-0 mt-2">
-                                                    <a href="./product.html">
-                                                        <div class="side-blog-product">
-                                                            <div class="row pl-3">
-                                                                <div class="col-4 pl-2">
-                                                                    <div class="image" style="background-image: url({% static "assets/images/products/p300.png" %})"></div>
-                                                                </div>
-                                                                <div class="col-8 px-0">
-                                                                    <h2>هدفون بی سیم سامسونگ مدل Galaxy Buds Live</h2>
-                                                                    <div class="row">
-                                                                        <div class="col-8 pl-0">
-                                                                            <span class="price">3.200.000 تومان</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <!-- /Side Panel Product -->
-                                                <!-- Side Panel Product -->
-                                                <div class="col-12 col-lg-12 px-0 mt-2">
-                                                    <a href="./product.html">
-                                                        <div class="side-blog-product">
-                                                            <div class="row pl-3">
-                                                                <div class="col-4 pl-2">
-                                                                    <div class="image" style="background-image: url({% static "assets/images/products/p400.png" %})"></div>
-                                                                </div>
-                                                                <div class="col-8 px-0">
-                                                                    <h2>دوربین دیجیتال کانن مدل EOS 2000D به همراه لنز 18-55 میلی متر</h2>
-                                                                    <div class="row">
-                                                                        <div class="col-8 pl-0">
-                                                                            <span class="price">3.200.000 تومان</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <!-- /Side Panel Product -->
+                                                {% endfor %}
+
                                             </div>
                                         </div>
                                     </div>

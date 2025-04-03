@@ -10,6 +10,7 @@ from .models import Blog, BlogTags, Comment, Replay
 from .forms import *
 from accounts.models import Profile, User
 from django.contrib import messages
+from product.models import *
 
 class BlogView(ListView):
     template_name = 'blog/blog.html'
@@ -24,6 +25,7 @@ class BlogView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
+        context['most_views_product'] = Products.objects.filter(total_views__gte=0).order_by('-total_views')[:4]
         return context
 
 class BlogDetataiView(DetailView):
@@ -42,6 +44,7 @@ class BlogDetataiView(DetailView):
         context = super().get_context_data(**kwargs)
         context['tags'] = BlogTags.objects.all()
         context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
+        context['most_views_product'] = Products.objects.filter(total_views__gte=0).order_by('-total_views')[:4]
         return context
     
 class CreateReplayView(FormView):

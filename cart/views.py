@@ -20,7 +20,7 @@ class CartView(TemplateView):
         if cart:
             product_list = [get_object_or_404(Products, pk=key) for key in cart.keys()]
             context['product_list'] = product_list
-            print(self.request.session.get('cart', {}))
+            
         return context
 
 
