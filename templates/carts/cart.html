@@ -96,14 +96,14 @@
                                                                 <div class="col-6 col-md-2 pr-0">
                                                                     <div class="d-md-none font-weight-bold">قیمت نهایی</div>
                                                                     <div class="pt-1 pr-2 bg-light"><span class="product-total">{{ product.final_price|intcomma }}</span> <span>تومان</span></div>
-                                                                    <a href="#" class="product-remove btn-remove-from-basket" data-id=""><div class="small pl-2"><i class="fa fa-times"></i> حذف</div></a>
+                                                                    <a href="{% url 'cart:delete-product' uid=uid %}" class="product-remove btn-remove-from-basket" data-id=""><div class="small pl-2"><i class="fa fa-times"></i> حذف</div></a>
                                                                 </div>
                                                         
                                                                 <!-- Hidden input to store the product id -->
-                                                                <input type="hidden" name="product-id-{{ uid }}" value="{{ product.pid }}">
+                                                                {% comment %} <input type="hidden" name="product-id-{{ uid }}" value="{{ product.pid }}"> {% endcomment %}
                                                             </div>
                                                             <hr>
-                                                {% endfor %}
+                                                    {% endfor %}
                                                 <button type="submit" class="product-remove btn-remove-from-basket">
                                                     بروز رسانی سبد خرید
                                                 </button>   
@@ -112,7 +112,7 @@
                                             <!-- Order Product Record -->
                                             <div class="row product">
                                                 <div class="col-12">
-                                                    <a href="#" class="product-remove btn-remove-from-basket" data-id="all"><div class="float-end small pl-2 font-weight-bold">خالی کردن سبد</div></a>
+                                                    <a href={% url 'cart:clean-cart' %} class="product-remove btn-remove-from-basket" data-id="all"><div class="float-end small pl-2 font-weight-bold">خالی کردن سبد</div></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -128,7 +128,7 @@
                                             <div>جمع کل فاکتور:</div>
                                         </div>
                                         <div class="col-6">
-                                            <div><span id="factor-total-price">3.200.000</span> تومان</div>
+                                            <div><span id="factor-total-price">{{request.session.total_price}}</span> تومان</div>
                                         </div>
                                     </div>
                                     <div class="row py-2 bg-light">
@@ -136,7 +136,7 @@
                                             <div>جمع تخفیف:</div>
                                         </div>
                                         <div class="col-6">
-                                            <div><span id="factor-total-discount">200.000</span> تومان</div>
+                                            <div><span id="factor-total-discount">{{request.session.total_discount_price}}</span> تومان</div>
                                         </div>
                                     </div>
                                     <div class="row py-2" id="total">
@@ -144,7 +144,7 @@
                                             <div>مبلغ قابل پرداخت:</div>
                                         </div>
                                         <div class="col-6">
-                                            <div><span id="factor-total">3.000.000</span> تومان</div>
+                                            <div><span id="factor-total">{{request.session.payment_price}}</span> تومان</div>
                                         </div>
                                     </div>
                                     <div class="row py-2">

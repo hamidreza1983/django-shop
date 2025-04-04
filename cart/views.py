@@ -10,38 +10,25 @@ from django.contrib import messages
 from product.models import *
 import uuid
 
-
+# {'e63ace46': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 51000000, 'quantity': 1, 'guarantee': '0', 'color': 'تک رنگ', 'product_discount': 0, 'product_discount_price': 51000000}, 
+#  'db90b273': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 102000000, 'quantity': 2, 'guarantee': '0', 'color': 'سفید', 'product_discount': 0, 'product_discount_price': 51000000}, 
+#  '6a0a1c19': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 52530000.0, 'quantity': 1, 'guarantee': '6', 'color': 'سفید', 'product_discount': 0, 'product_discount_price': 51000000}, 
+#  'total_price': 153000000, 'total_discount_price': 0, 'payment_price': 0}
 
 class CartView(TemplateView):
     template_name = 'carts/cart.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     cart = self.request.session.get('cart', {})
-    #     if cart:
-    #         product_list = [get_object_or_404(Products, pk=key) for key in cart.keys()]
-    #         for key, value in cart.items():
-    #             product = Products.objects.get(id=key)
-    #             quantity = int(value['quantity'])
-    #             guarantee_mounts = value['guarantee']
-    #             if guarantee_mounts == '0':
-    #                 guarantee = None
-    #             else:
-    #                 guarantee = Guarantee.objects.get(id=guarantee_mounts)
-    #             if guarantee:
-    #                 price_increase = int(guarantee.price_increase)
-    #                 total_product_price = int(product.price) + (int(product.price) * price_increase/100) * quantity   
-
-
-    #         context['product_list'] = product_list
-            
-    #     return context
-
-import uuid
-from django.shortcuts import redirect, get_object_or_404
-from django.contrib import messages
-from django.views.generic import TemplateView
-from product.models import Products, Guarantee  # اطمینان از ایمپورت مدل‌های مربوطه
+    def get(self, request, *args, **kwargs):
+        cart = request.session.get('cart', {})        
+        if len(cart)>0: 
+            total_price = sum([item['price'] * int(item['quantity']) for item in cart.values()])
+            total_discount = sum([int(item['product_discount_price'] * int(item['quantity'])) for item in cart.values()])
+            total_discount_price = total_price - total_discount
+            request.session['total_price'] = total_price
+            request.session['total_discount_price'] = total_discount_price
+            request.session['payment_price'] = request.session['total_price'] - request.session['total_discount_price']
+            request.session.modified = True
+        return super().get(request, *args, **kwargs)
 
 
 # به ازای تعداد جدید از صفحه آپدیت کارت کار باقی مونده
@@ -64,20 +51,20 @@ class AddToCartView(TemplateView):
         # محاسبه قیمت نهایی محصول بر اساس تخفیف و گارانتی
         increase_price_with_guarantee = (product.price * guarantee.price_increase / 100) if guarantee != 0 else 0
         price_with_discount = product.get_discounted_price()
-        product_discount = product.discount_price
-        product_price = increase_price_with_guarantee + int(price_with_discount)
-
-
+        product_price = int(increase_price_with_guarantee) + int(price_with_discount)
         cart = request.session.get('cart', {})
+
         # بررسی اینکه آیا محصول با همان مشخصات قبلاً در سبد خرید هست یا نه
         found = False
-        #print (cart.items())
+        # print (cart.items())
+
         for key, item in cart.items():
-            if item['pid'] == int(pid) and item['color'] == color and item['guarantee'] == g_mount:
-                cart[key]['quantity'] += 1  # افزایش تعداد
-                cart[key]['final_price'] = cart[key]['quantity'] * product_price
-                found = True
-                break
+            if type(item) == dict and item.get('pid'):
+                if item['pid'] == int(pid) and item['color'] == color and item['guarantee'] == g_mount:
+                    cart[key]['quantity'] += 1  # افزایش تعداد
+                    cart[key]['final_price'] = cart[key]['quantity'] * product_price
+                    found = True
+                    break
 
         if not found:
             # ایجاد شناسه تصادفی برای محصول جدید
@@ -91,37 +78,76 @@ class AddToCartView(TemplateView):
                 'quantity': 1,
                 'guarantee': g_mount,
                 'color': color,
-                'product_discount': product_discount,
+                'product_discount': int(product.discount_price),
+                'product_discount_price' : int(price_with_discount),
             }
+
         request.session['cart'] = cart
         request.session.modified = True
         messages.success(request, 'محصول به سبد خرید شما اضافه شد')
         return redirect("product:product-detail", pk=pid)
-
 
 class UpdateCartView(TemplateView):
     def get(self, request, *args, **kwargs):
         messages.error(request, 'درخواست نا مناسب')
         return redirect("cart:cart")
 
-    def post(self, request, *args, **kwargs):
-        print (request.POST)
-        order_numbers = []
-        product_ids = []
-        
+    def post(self, request, *args, **kwargs):      
         cart = request.session.get('cart', {})
-        product_list = [get_object_or_404(Products, pk=key['pid']) for key in cart.values()]
-        # Collect product ids and their corresponding quantities
-        for product in product_list:
-            quantity = request.POST.get(f"order-number-{product.id}", 1)  # Default to 1 if not set
-            product_ids.append(product.id)
-            order_numbers.append(quantity)
 
-        # Update the cart with the new quantities
-        for product_id, quantity in zip(product_ids, order_numbers):
-            cart[str(product_id)]['quantity'] = quantity
-
+        for uid_post, quantity_post in request.POST.items():
+            for uuid in cart.keys():
+                if uid_post == uuid:
+                    cart[uuid]['quantity'] = quantity_post
+                    product = get_object_or_404(Products, id=cart[uuid]['pid'])
+                    guarantee = get_object_or_404(Guarantee, mounts= cart[uuid]['guarantee']) if cart[uuid]['guarantee'] != '0' else 0
+                    increase_price_with_guarantee = (product.price * guarantee.price_increase / 100) if guarantee != 0 else 0
+                    price_with_discount = product.get_discounted_price()
+                    product_price = increase_price_with_guarantee + int(price_with_discount)
+                    cart[uuid]['final_price'] = int(cart[uuid]['quantity']) * product_price
+                    break
         request.session['cart'] = cart
+        total_price = sum([item['price'] * int(item['quantity']) for item in cart.values()])
+        total_discount = sum([int(item['product_discount_price'] * int(item['quantity'])) for item in cart.values()])
+        total_discount_price = total_price - total_discount
+        request.session['total_price'] = total_price
+        request.session['total_discount_price'] = total_discount_price
+        request.session['payment_price'] = request.session['total_price'] - request.session['total_discount_price']
         request.session.modified = True
         messages.success(request, 'سبد خرید شما با موفقیت بروزرسانی شد')
+        return redirect("cart:cart")
+
+class DeleteCartItemView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        uid = kwargs.get('uid')
+        cart = request.session.get('cart', {})
+        if uid in cart:
+            del cart[uid]
+            request.session['cart'] = cart
+            request.session.modified = True
+            if len(cart) == 0:
+                request.session['total_price'] = 0
+                request.session['total_discount_price'] = 0
+                request.session['payment_price'] = 0
+            messages.success(request, 'محصول از سبد خرید شما حذف شد')
+        else:
+            messages.error(request, 'محصول در سبد خرید شما وجود ندارد')
+        return redirect("cart:cart")
+    
+    def post(self, request, *args, **kwargs):
+        messages.error(request, 'درخواست نا مناسب')
+        return redirect("cart:cart")
+
+class CleanCartItemView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        request.session['cart'] = {}
+        request.session['total_price'] = 0
+        request.session['total_discount_price'] = 0
+        request.session['payment_price'] = 0
+        request.session.modified = True
+        messages.success(request, 'سبد خرید شما خالی شد')
+        return redirect("cart:cart")
+
+    def post(self, request, *args, **kwargs):
+        messages.error(request, 'درخواست نا مناسب')
         return redirect("cart:cart")
