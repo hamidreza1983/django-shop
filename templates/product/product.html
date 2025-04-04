@@ -144,10 +144,10 @@
                                             <div class="sub-title pt-2 pb-2">گارانتی</div>
 
                                                 
-                                            <select name="gid" class="form-select">
+                                            <select name="g_mount" class="form-select">
                                                     <option value="0">بدون گارانتی</option>
                                                     {% for g in product.guarantees.all %}
-                                                    <option value="{{g.id}}">گارانتی {{g.mounts}} ماهه</option>
+                                                    <option value="{{g.mounts}}">گارانتی {{g.mounts}} ماهه</option>
                                                     {% endfor %}
                                             </select>
                                         </div>

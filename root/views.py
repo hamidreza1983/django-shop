@@ -14,6 +14,14 @@ from blog.models import Blog
 class HomeView(TemplateView):
     template_name = 'root/index.html'
 
+    def get(self, request, *args, **kwargs):
+        try:
+            del request.session['cart']
+            request.session.modified = True
+        except KeyError:
+            pass
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["selected_products"] = Products.objects.all().order_by("-total_favorites")[:4]

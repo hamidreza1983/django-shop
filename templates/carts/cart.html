@@ -58,19 +58,17 @@
                                             </div>
                                             <form action={% url 'cart:update-cart' %} method="POST">
                                                 {% csrf_token %}
-                                                {% for product in product_list %}
-                                                    {% for id, data in request.session.cart.items %}
-                                                        {% if product.id|to_str == id %}
+                                                    {% for uid, product in request.session.cart.items %}
                                                             <!-- Order Product Record -->
                                                             <div class="row product">
                                                                 <div class="col-12 col-md-4">
                                                                     <div class="row">
                                                                         <div class="col-2 col-md-4 pl-0">
-                                                                            <img src="{{ product.image.url }}" alt="">
+                                                                            <img src="{{ product.image }}" alt="">
                                                                         </div>
                                                                         <div class="col-10 col-md-8">
-                                                                            <a href="{% url 'product:product-detail' pk=product.id %}" target="_blank">
-                                                                                <div class="title pt-2">{{ product.name }}/({{data.color}})</div>
+                                                                            <a href="{% url 'product:product-detail' pk=product.pid %}" target="_blank">
+                                                                                <div class="title pt-2">{{ product.title }}/({{product.color}})</div>
                                                                             </a>
                                                                         </div>
                                                                     </div>
@@ -85,7 +83,7 @@
                                                                         <div class="input-group-prepend">
                                                                             <button class="btn btn-outline-secondary btn-plus" type="button">+</button>
                                                                         </div>
-                                                                        <input type="number" name="order-number-{{ product.id }}" value="{{data.quantity}}" class="form-control text-center order-number" min="1">
+                                                                        <input type="number" name="{{ uid }}" value="{{product.quantity}}" class="form-control text-center order-number" min="1">
                                                                         <div class="input-group-prepend">
                                                                             <button class="btn btn-outline-secondary btn-minus" type="button">-</button>
                                                                         </div>
@@ -93,20 +91,18 @@
                                                                 </div>
                                                                 <div class="col-6 col-md-2">
                                                                     <div class="d-md-none font-weight-bold">تخفیف</div>
-                                                                    <div class="pt-1"><span class="product-discount">{{ product.discount_price }}</span> <span>%</span></div>
+                                                                    <div class="pt-1"><span class="product-discount">{{ product.product_discount }}</span> <span>%</span></div>
                                                                 </div>
                                                                 <div class="col-6 col-md-2 pr-0">
                                                                     <div class="d-md-none font-weight-bold">قیمت نهایی</div>
-                                                                    <div class="pt-1 pr-2 bg-light"><span class="product-total">{{ product.get_discounted_price|intcomma }}</span> <span>تومان</span></div>
+                                                                    <div class="pt-1 pr-2 bg-light"><span class="product-total">{{ product.final_price|intcomma }}</span> <span>تومان</span></div>
                                                                     <a href="#" class="product-remove btn-remove-from-basket" data-id=""><div class="small pl-2"><i class="fa fa-times"></i> حذف</div></a>
                                                                 </div>
                                                         
                                                                 <!-- Hidden input to store the product id -->
-                                                                <input type="hidden" name="product-id-{{ product.id }}" value="{{ product.id }}">
+                                                                <input type="hidden" name="product-id-{{ uid }}" value="{{ product.pid }}">
                                                             </div>
                                                             <hr>
-                                                        {% endif %}
-                                                {% endfor %}
                                                 {% endfor %}
                                                 <button type="submit" class="product-remove btn-remove-from-basket">
                                                     بروز رسانی سبد خرید
