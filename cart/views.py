@@ -6,16 +6,18 @@ from django.views.generic import (
     ListView,
     DetailView
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from product.models import *
 import uuid
+from accounts.models import Profile, UserAddress
 
 # {'e63ace46': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 51000000, 'quantity': 1, 'guarantee': '0', 'color': 'تک رنگ', 'product_discount': 0, 'product_discount_price': 51000000}, 
 #  'db90b273': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 102000000, 'quantity': 2, 'guarantee': '0', 'color': 'سفید', 'product_discount': 0, 'product_discount_price': 51000000}, 
 #  '6a0a1c19': {'pid': 5, 'title': 'پلی استیشن 5 اسلیم', 'image': '/media/products/slim_Pive6UW.jpg', 'price': 51000000, 'final_price': 52530000.0, 'quantity': 1, 'guarantee': '6', 'color': 'سفید', 'product_discount': 0, 'product_discount_price': 51000000}, 
 #  'total_price': 153000000, 'total_discount_price': 0, 'payment_price': 0}
 
-class CartView(TemplateView):
+class CartView(LoginRequiredMixin, TemplateView):
     template_name = 'carts/cart.html'
 
     def get(self, request, *args, **kwargs):
@@ -29,6 +31,18 @@ class CartView(TemplateView):
             request.session['payment_price'] = request.session['total_price'] - request.session['total_discount_price']
             request.session.modified = True
         return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        cart = self.request.session.get('cart', {})
+        product_list = []
+        for key, value in cart.items():
+            product = get_object_or_404(Products, id=value['pid'])
+            product_list.append(product)
+        category_list = [product.category.name for product in product_list]
+        products = Products.objects.filter(category__name__in=category_list)
+        context['products'] = products
+        return context
 
 
 # به ازای تعداد جدید از صفحه آپدیت کارت کار باقی مونده
@@ -87,7 +101,7 @@ class AddToCartView(TemplateView):
         messages.success(request, 'محصول به سبد خرید شما اضافه شد')
         return redirect("product:product-detail", pk=pid)
 
-class UpdateCartView(TemplateView):
+class UpdateCartView(LoginRequiredMixin,TemplateView):
     def get(self, request, *args, **kwargs):
         messages.error(request, 'درخواست نا مناسب')
         return redirect("cart:cart")
@@ -117,7 +131,7 @@ class UpdateCartView(TemplateView):
         messages.success(request, 'سبد خرید شما با موفقیت بروزرسانی شد')
         return redirect("cart:cart")
 
-class DeleteCartItemView(TemplateView):
+class DeleteCartItemView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         uid = kwargs.get('uid')
         cart = request.session.get('cart', {})
@@ -138,7 +152,7 @@ class DeleteCartItemView(TemplateView):
         messages.error(request, 'درخواست نا مناسب')
         return redirect("cart:cart")
 
-class CleanCartItemView(TemplateView):
+class CleanCartItemView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         request.session['cart'] = {}
         request.session['total_price'] = 0
@@ -151,3 +165,16 @@ class CleanCartItemView(TemplateView):
     def post(self, request, *args, **kwargs):
         messages.error(request, 'درخواست نا مناسب')
         return redirect("cart:cart")
+    
+
+class CheckoutView(LoginRequiredMixin, TemplateView):
+    template_name = "carts/checkout.html"
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = get_object_or_404(Profile, user=self.request.user)
+        address = UserAddress.objects.filter(profile=profile).order_by('-created_at')[0]
+        context['address'] = address
+        return context

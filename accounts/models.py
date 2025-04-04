@@ -121,6 +121,9 @@ class Profile(models.Model):
     
     def get_addresses(self):
         return self.addresses.all()
+    
+    def get_orders(self):
+        return self.orders.all()
 
 
 class Province(models.Model):
@@ -153,4 +156,9 @@ class UserAddress(models.Model):
     
     def __str__(self):
         return str(self.profile.user.email) + ' - ' + str(self.city.name) + ' - ' + str(self.province.name)
+    
+    class Meta:
+        verbose_name = 'آدرس'
+        verbose_name_plural = 'آدرس ها'
+        ordering = ['-created_at']
     

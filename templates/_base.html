@@ -170,8 +170,7 @@
                                                 <ul style="">
                                                     <li><a href={% url 'accounts:user-compare' %}>مقایسه محصول</a></li>
                                                     <li><a href={% url 'cart:cart' %}>سبد خرید</a></li>
-                                                    <li><a href="./checkout.html">پیش فاکتور</a></li>
-                                                    <li><a href="./thankyou.html">پرداخت موفق</a></li>
+                                                    <li><a href={% url 'cart:checkout' %}>پیش فاکتور</a></li>
                                                 </ul>
                                             </li>
                                             {% endif %}
