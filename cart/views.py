@@ -175,6 +175,9 @@ class CheckoutView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile = get_object_or_404(Profile, user=self.request.user)
-        address = UserAddress.objects.filter(profile=profile).order_by('-created_at')[0]
+        try:
+            address = UserAddress.objects.filter(profile=profile).order_by('-created_at')[0]
+        except:
+            address = None
         context['address'] = address
         return context

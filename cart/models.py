@@ -14,11 +14,20 @@ class Cart(models.Model):
     total_price = models.PositiveIntegerField()
     total_discount = models.PositiveIntegerField()
     total_payment = models.PositiveIntegerField()
+    cart_hash = models.CharField(max_length=255, default="000000000000")
+    cart_pan = models.CharField(max_length=200, default='000000000000000')
+    ref_id = models.CharField(max_length=30, default="0000000000")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.profile.user.email} - {self.status}"
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def get_items(self):
+        return self.items.all()
     
 
 

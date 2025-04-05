@@ -45,27 +45,26 @@
                                                         <div class="title text-primary">جزئیات سفارش</div>
                                                         <hr>
                                                         <div class="row">
-                                                            <div class="col-12 col-md-4 my-1">شماره پیگیری: <strong>1234564</strong></div>
-                                                            <div class="col-12 col-md-4 my-1">تاریخ ثبت: <strong>01 فروردین 1403 22:10</strong></div>
+                                                            <div class="col-12 col-md-4 my-1">شماره پیگیری: <strong>{{cart.ref_id}}</strong></div>
+                                                            <div class="col-12 col-md-4 my-1">تاریخ ثبت: <strong>{{cart.created_at|to_jalali}}</strong></div>
                                                             <div class="col-12 col-md-4 my-1">وضعیت سفارش: <strong>در حال انجام</strong></div>
                                                         </div>
                                                         <hr>
                                                         <div class="row">
-                                                            <div class="col-12 col-md-3 my-1">مبلغ پرداختی: <strong>300,000,000 تومان</strong></div>
-                                                            <div class="col-12 col-md-9 my-1">پرداخت اینترنتی توسط درگاه ملت</div>
-                                                            <div class="col-12 col-md-3 my-1">جمع تخفیف: <strong>100,000 تومان</strong></div>
-                                                            <div class="col-12 col-md-3 my-1">هزینه ارسال: <strong>30,000 تومان</strong></div>
+                                                            <div class="col-12 col-md-3 my-1">مبلغ پرداختی: <strong>{{cart.total_payment}} تومان</strong></div>
+                                                            <div class="col-12 col-md-9 my-1">پرداخت اینترنتی توسط درگاه</div>
+                                                            <div class="col-12 col-md-3 my-1">جمع تخفیف: <strong>{{cart.total_discount}} تومان</strong></div>
+                                                            <div class="col-12 col-md-3 my-1">هزینه ارسال: <strong>به عهده مشتری</strong></div>
                                                         </div>
                                                         <hr>
                                                         <span>ارسال به:</span>
                                                         <div class="address-title">
-                                                            <span id="province-title">تهران</span>،
-                                                            <span id="city-title">خیابان انقلاب</span>،
-                                                            <span id="address">خیابان 12 فروردین، کوچه 1، پلاک 1</span>
+                                                            <span id="province-title">{{cart.profile.last_address.city}}</span>،
+                                                            <span id="address">{{cart.profile.last_address.complete_address}}</span>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-12 col-md-4">کدپستی: <strong>123456789</strong></div>
-                                                            <div class="col-12 col-md-8">تحویل گیرنده: <strong>مصطفی کیانی (09121234567)</strong></div>
+                                                            <div class="col-12 col-md-4">کدپستی: <strong>{{cart.profile.last_address.postal_code}}</strong></div>
+                                                            <div class="col-12 col-md-8">تحویل گیرنده: <strong>{{cart.profile.first_name}} {{cart.profile.last_name}}({{cart.profile.mobile}})</strong></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -74,34 +73,21 @@
                                                         <div class="title text-primary">محصولات خریداری شده</div>
                                                         <hr>
                                                         <div class="row">
-                                                            <!-- Order Product Record -->
+                                                            {% for item in cart.get_items %}
                                                             <span class="col-6 col-sm-4 col-lg-3 px-0 mx-2">
                                                                 <a href="./product.html" target="_blank">
                                                                     <div class="product-box">
-                                                                        <div class="image" style="background-image: url(assets/images/products/p100.png)"></div>
+                                                                        <div class="image" style="background-image: url({{item.product.image.url}})"></div>
                                                                         <div class="text-center px-1 px-sm-3">
-                                                                            <a href="./product.html" target="_blank"><h2>گوشی موبایل سامسونگ مدل Galaxy A51 دو سیم کارت</h2></a>
-                                                                            <div class="number">تعداد: 1 عدد</div>
-                                                                            <div class="price text-dark">200,000,000 تومان</div>
+                                                                            <a href="./product.html" target="_blank"><h2>{{item.product.name}}</h2></a>
+                                                                            <div class="number">تعداد: {{item.quantity}} عدد</div>
+                                                                            <div class="price text-dark">{{item.product.price}} تومان</div>
                                                                         </div>
                                                                     </div>
                                                                 </a>
                                                             </span>
-                                                            <!-- /Order Product Record -->
-                                                            <!-- Order Product Record -->
-                                                            <span class="col-6 col-sm-4 col-lg-3 px-0 mx-2">
-                                                                <a href="./product.html" target="_blank">
-                                                                    <div class="product-box">
-                                                                        <div class="image" style="background-image: url(assets/images/products/p200.png)"></div>
-                                                                        <div class="text-center px-1 px-sm-3">
-                                                                            <a href="./product.html" target="_blank"><h2>لپ تاپ 15 اینچی ایسوس مدل VivoBook X543MA-DM905</h2></a>
-                                                                            <div class="number">تعداد: 1 عدد</div>
-                                                                            <div class="price text-dark">100,000,000 تومان</div>
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                            </span>
-                                                            <!-- /Order Product Record -->
+                                                            {% endfor %}
+
                                                         </div>
                                                     </div>
                                                 </div>

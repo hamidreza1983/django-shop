@@ -1,0 +1,147 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load jalali_filters %}
+{% load humanize %}
+{% block 'title' %}factors{% endblock 'title' %}
+{% block 'content' %}
+<section class="inner-page" id="profile-page">
+    <div class="container-fluid" id="page-hero">
+        <div class="row">
+            <div class="col-12">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 px-0">
+                            <h1>ناحیه کاربری</h1>
+                            <p>به ناحیه کاربری روبیک مارکت خوش آمدید.</p>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="../index.html">صفحه نخست</a></li>
+                                    <li class="breadcrumb-item"><a href="#">ناحیه کاربری</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">سفارشات</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-12 col-lg-3">
+                            <!-- Side Panel -->
+                            <div class="accordion" id="side-panel">
+                                <div class="accordion-item menu-container">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                            <span class="row">
+                                                <span class="col-3 col-sm-2 col-lg-3">
+                                                    <img src={% static 'assets/images/user-no-image.jpg' %} class="rounded-circle">
+                                                </span>
+                                                <span class="col-7 col-sm-8 col-lg-7 pt-0 pt-sm-2 pt-md-3 pt-lg-0 align-self-center">
+                                                    <div id="full-name"> {{profile.first_name}} {{profile.last_name}}</div>
+                                                    <div class="mt-2" id="email-mobile">{{ profile.mobile }}</div>
+                                                </span>
+                                            </span>
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                        <div class="accordion-body">
+                                            <ul>
+                                                <li>
+                                                    <a href={% url 'accounts:view-profile'%} class="active">
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/profile.webp' %} class="pl-2"></div> اطلاعات حساب
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="factors.html">
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/orders.webp' %} class="pl-2"></div> سفارش های من
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href={% url 'accounts:user-favorties' %}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/favorites.webp' %} class="pl-2"></div> علاقه مندی ها
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href={% url 'accounts:addresses' %}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/addresses.webp' %} class="pl-2"></div> آدرس های من
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li><hr></li>
+                                                <li>
+                                                    <a href={% url 'accounts:logout'%}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/exit.webp' %} class="pl-2"></div> خروج از حساب
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Side Panel -->
+                        </div>
+                        <div class="col-12 col-lg-9 pl-lg-0 pr-lg-2 mt-2 mt-lg-0">
+                            <!-- Factors List -->
+                             {% for cart in carts %}
+                            <div class="custom-container mt-2 order">
+                                <div class="row pt-2 px-3">
+                                    <div class="col-12 col-sm-6"><a href={% url 'payment:factor-view'%}?pk={{cart.id}}><h2>سفارش شماره #{{cart.id}}</h2></a></div>
+                                    <div class="col-12 col-sm-6 text-sm-end"><span>{{cart.created_at|to_jalali}}</span> - <span>ایجاد شده</span></div>
+                                </div>
+                                <hr>
+                                <div class="container">
+                                    <div class="row py-2">
+                                        <div class="col-12">
+                                            <div>
+                                                <div class="header">
+                                                    <div class="total py-1"><span>مبلغ کل:</span>{{cat.total_payment}}</div>
+                                                </div>
+                                                <div class="container products px-0">
+                                                    <div class="row">
+                                                        {% for item in cart.get_items %}
+                                                        <span class="col-12 col-sm-6 col-lg-4 col-xl-3 px-1">
+                                                            <a href="../product.html" target="_blank">
+                                                                <div class="product-box">
+                                                                    <div class="image" style="background-image: url({{item.product.image.url}})"></div>
+                                                                    <div class="text-center px-1 px-sm-3">
+                                                                        <h2>{{item.product.name}}</h2>
+                                                                        <div class="number">تعداد: {{item.quantity}} عدد</div>
+                                                                        <div class="price">مبلغ: {{item.quantity|final_price:item.product.price}} عدد</div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </span>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                <a href={% url 'payment:factor-view'%}?pk={{cart.id}}><div class="btn btn-sm btn-warning float-end">مشاهده فاکتور</div></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <!-- /Factors List -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock 'content' %}

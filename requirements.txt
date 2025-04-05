@@ -5,3 +5,4 @@ djangorestframework-simplejwt
 django-mail-templated
 pillow
 jdatetime
+requests

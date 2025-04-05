@@ -124,6 +124,9 @@ class Profile(models.Model):
     
     def get_orders(self):
         return self.orders.all()
+    
+    def last_address(self):
+        return self.addresses.all()[0]
 
 
 class Province(models.Model):

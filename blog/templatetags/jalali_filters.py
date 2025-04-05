@@ -23,3 +23,7 @@ def times(number):
 @register.filter
 def to_str(number):
     return str(number)
+
+@register.filter
+def final_price(quantity, price):
+    return str(int(quantity) * int(price))

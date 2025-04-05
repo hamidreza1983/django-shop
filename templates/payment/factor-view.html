@@ -1,0 +1,285 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load jalali_filters %}
+{% load humanize %}
+{% block 'title' %}factor-view{% endblock 'title' %}
+{% block 'content' %}
+<section class="inner-page" id="profile-page">
+    <div class="container-fluid" id="page-hero">
+        <div class="row">
+            <div class="col-12">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 px-0">
+                            <h1>ناحیه کاربری</h1>
+                            <p>به ناحیه کاربری روبیک مارکت خوش آمدید.</p>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="../index.html">صفحه نخست</a></li>
+                                    <li class="breadcrumb-item"><a href="#">ناحیه کاربری</a></li>
+                                    <li class="breadcrumb-item" aria-current="page">سفارشات</li>
+                                    <li class="breadcrumb-item active" aria-current="page">نمایش فاکتور</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-12 col-lg-3">
+                            <!-- Side Panel -->
+                            <div class="accordion" id="side-panel">
+                                <div class="accordion-item menu-container">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                            <span class="row">
+                                                <span class="col-3 col-sm-2 col-lg-3">
+                                                    <img src={% static 'assets/images/user-no-image.jpg' %} class="rounded-circle">
+                                                </span>
+                                                <span class="col-7 col-sm-8 col-lg-7 pt-0 pt-sm-2 pt-md-3 pt-lg-0 align-self-center">
+                                                    <div id="full-name"> {{profile.first_name}} {{profile.last_name}}</div>
+                                                    <div class="mt-2" id="email-mobile">{{ profile.mobile }}</div>
+                                                </span>
+                                            </span>
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                        <div class="accordion-body">
+                                            <ul>
+                                                <li>
+                                                    <a href={% url 'accounts:view-profile'%} class="active">
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/profile.webp' %} class="pl-2"></div> اطلاعات حساب
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="factors.html">
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/orders.webp' %} class="pl-2"></div> سفارش های من
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href={% url 'accounts:user-favorties' %}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/favorites.webp' %} class="pl-2"></div> علاقه مندی ها
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href={% url 'accounts:addresses' %}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/addresses.webp' %} class="pl-2"></div> آدرس های من
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <li><hr></li>
+                                                <li>
+                                                    <a href={% url 'accounts:logout'%}>
+                                                        <div>
+                                                            <div class="icon d-inline-block"><img src={% static 'assets/images/icons/profile-menu/exit.webp' %} class="pl-2"></div> خروج از حساب
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Side Panel -->
+                        </div>
+                        {% if cart %}
+                        <div class="col-12 col-lg-9 pl-lg-0 pr-lg-2 mt-2 mt-lg-0">
+
+                            <!-- Factors List -->
+                            <div class="custom-container mt-2 mt-lg-0 order">
+                                <div class="row pt-2 px-3">
+                                    <div class="col-12 col-sm-6"><h2>سفارش شماره #{{cart.id}}</h2></div>
+                                    <div class="col-12 col-sm-6 text-sm-end"><span>{{cart.created_at|to_jalali}}</span> - <span>پرداخت شده</span></div>
+                                </div>
+                                <hr>
+                                <div class="container">
+                                    <div class="row py-2">
+                                        <div class="col-12">
+
+                                            <div class="row py-3 border border-1">
+                                                <div class="col-12 col-md-4 py-2 py-md-0 text-center text-md-start">
+                                                    <img src="{% static 'assets/images/logo.png' %}" height="50px">
+                                                    روبیک مارکت
+                                                </div>
+                                                <div class="col-12 col-md-4 py-2 py-md-0 text-center">
+                                                    <strong>فاکتور فروش</strong>
+                                                </div>
+                                                <div class="col-12 col-md-4 py-2 py-md-0 text-center text-md-end">
+                                                    <div>تاریخ خرید:{{cart.created_at|to_jalali}}</div>
+                                                    <div>شماره سفارش: {{cart.id}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="row border border-1">
+                                                <div class="col-12 col-md-6 py-3 border border-1">
+                                                    <strong>فروشنده</strong>
+                                                    <div>فروشنده: روبیک مارکت</div>
+                                                    <div>نشانی: تهران، سعادت آباد</div>
+                                                    <div>تلفن: 09121234567</div>
+                                                </div>
+                                                <div class="col-12 col-md-6 py-3 border border-1">
+                                                    <strong>خریدار</strong>
+                                                    <div>آدرس: {{address.city}}، {{address.complete_address}}</div>
+                                                    <div>تلفن تماس: {{profile.mobile}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="row py-3 border border-1">
+                                                <div class="col-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>ردیف</th>
+                                                                <th>شرح کالا</th>
+                                                                <th>قیمت واحد (تومان)</th>
+                                                                <th>تخفیف (%)</th>
+                                                                <th>تعداد</th>
+                                                                <th>قیمت کل (تومان)</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for item in cart.get_items %}
+                                                                <tr>
+                                                                    <td>1</td>
+                                                                    <td nowrap="nowrap">{{item.product.name}}</td>
+                                                                    <td>{{item.product.price}}</td>
+                                                                    <td>{{item.product.discount_price}}</td>
+                                                                    <td>{{item.quantity}}</td>
+                                                                    <td>{{item.quantity|final_price:item.product.price}}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                            <tr>
+                                                            <tr>
+                                                                <td colspan="6" style="text-align: left">جمع فاکتور: {{cart.total_price}} تومان</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="6" style="text-align: left">هزینه ارسال: با مشتری</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="6" style="text-align: left">جمع کل: {{cart.total_payment}} تومان</td>
+                                                            </tr>
+                                                            </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Factors List -->
+                        </div>
+                        {% else %}
+                        <div class="col-12 col-lg-9 pl-lg-0 pr-lg-2 mt-2 mt-lg-0">
+                            <!-- Factors List -->
+                            <div class="custom-container mt-2 mt-lg-0 order">
+                                <hr>
+                                <div class="container">
+                                    <div class="row py-2">
+                                        <div class="col-12">
+
+                                            <div class="row py-3 border border-1">
+                                                <div class="col-12 col-md-4 py-2 py-md-0 text-center text-md-start">
+                                                    <img src="{% static 'assets/images/logo.png' %}" height="50px">
+                                                    روبیک مارکت
+                                                </div>
+                                                <div class="col-12 col-md-4 py-2 py-md-0 text-center">
+                                                    <strong> شما اخیرا چنین خریدی نداشته اید </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Factors List -->
+                        </div>
+                        <h2> شما اخیرا فاکتور خریدی نداشته اید  </h2>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<section class="pt-4 pb-3" id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-sm-4 col-lg-2">
+                <div class="title">دسترسی سریع</div>
+                <ul>
+                    <li><a href="../blog.html">بلاگ آموزشی</a></li>
+                    <li><a href="../faq.html">راهنمای خرید</a></li>
+                    <li><a href="../faq.html">شیوه های پرداخت</a></li>
+                    <li><a href="../contact.html">پیگیری سفارش</a></li>
+                    <li><a href="../faq.html">سوالات متداول</a></li>
+                    <li><a href="../about.html">درباره ما</a></li>
+                    <li><a href="../contact.html">تماس با ما</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-4 col-lg-2">
+                <div class="title">گروه های محصولات</div>
+                <ul>
+                    <li><a href="../products.html">تجهیزات کامپیوتر</a></li>
+                    <li><a href="../products.html">گوشی موبایل</a></li>
+                    <li><a href="../products.html">جانبی موبایل</a></li>
+                    <li><a href="../products.html">ساعت هوشمند</a></li>
+                    <li><a href="../products.html">جانبی کامپیوتر</a></li>
+                    <li><a href="../products.html">دوربین</a></li>
+                    <li><a href="../products.html">لپ تاپ</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-4 col-lg-2 d-none d-sm-inline-block">
+                <div class="title">ناحیه کاربری</div>
+                <ul>
+                    <li><a href="../login.html">ورود به سایت</a></li>
+                    <li><a href="../register.html">عضویت در سایت</a></li>
+                    <li><a href="../reset-password.html">بازیابی رمز عبور</a></li>
+                    <li><a href="../cart.html">سبد خرید</a></li>
+                    <li><a href="../checkout.html">پیش فاکتور</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-12 col-lg-6">
+                <hr class="d-lg-none">
+                <img src="{% static 'assets/images/logo.png' %}" alt=""> روبیک مارکت
+                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد.</p>
+                <div class="row">
+                    <div class="col-12 col-md-6 text-center p-2" id="support-info">
+                        <div>7 روز هفته، 24 ساعت شبانه روز</div>
+                        <div>پاسخگوی شما هستیم</div>
+                        <div>09351234567</div>
+                    </div>
+                    <div class="col-12 col-md-6 pt-2 pt-md-0" id="certificates">
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/enamad.png' %}" alt=""></a>
+                            </div>
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/samandehi.png' %}" alt=""></a>
+                            </div>
+                            <div class="col-4 text-center">
+                                <a href="#"><img src="{% static 'assets/images/certificates/etehadiye.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock 'content' %}

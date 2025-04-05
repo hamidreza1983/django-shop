@@ -174,7 +174,8 @@
                                                     {% if request.user.is_authenticated %}
                                                         <li class="dm-bottom-separator"></li>
                                                         <li><a href={% url 'accounts:view-profile' %}>مشخصات کاربری</a></li>
-                                                        <li><a href="profile/factors.html">سفارشات</a></li>
+                                                        <li><a href={% url 'payment:factor-view' %}>مشاهده فاکتور</a></li>
+                                                        <li><a href={% url 'payment:factors' %}>سفارشات</a></li>
                                                         <li><a href={% url 'accounts:addresses' %}>آدرس ها</a></li>
                                                         <li><a href={% url 'accounts:user-favorties' %}>علاقه مندی ها</a></li>
                                                         <li><a href="{% url 'accounts:logout' %}">خروج از حساب کاربری</a></li>
