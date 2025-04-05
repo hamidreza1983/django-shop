@@ -25,7 +25,9 @@ class Cart(models.Model):
 class OrderItems(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey('product.Products', on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
+    color = models.CharField(max_length=100, default="بدون رنگ")
+    guarantee = models.CharField(max_length=50, default="بدون گارانتی")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
