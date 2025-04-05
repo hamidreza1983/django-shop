@@ -151,6 +151,10 @@ class VerifyView(LoginRequiredMixin, TemplateView):
             else:
                 messages.error(request, f"{status['errors']}")
                 return redirect("cart:checkout")
+        else:
+            messages.error(request, f"پرداخت ناموفق")
+            return redirect("cart:checkout")
+
                 
 class PaymentAcceptView(LoginRequiredMixin, TemplateView):
     template_name = 'payment/thankyou.html'
