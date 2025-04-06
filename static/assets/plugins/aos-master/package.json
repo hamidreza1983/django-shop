@@ -48,5 +48,8 @@
     "test": "node ./node_modules/karma/bin/karma start karma.conf.js",
     "build": "webpack",
     "dev": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js"
+  },
+  "resolutions": {
+    "handlebars": "^4.7.7"
   }
 }
