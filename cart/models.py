@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Status(models.Model):
     name = models.CharField(max_length=20)
@@ -7,10 +8,15 @@ class Status(models.Model):
     def __str__(self):
         return self.name
 
+
 class Cart(models.Model):
-    profile = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE, related_name="orders")
+    profile = models.ForeignKey(
+        'accounts.Profile', on_delete=models.CASCADE, related_name="orders"
+    )
     is_paid = models.BooleanField(default=False)
-    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.ForeignKey(
+        Status, on_delete=models.SET_NULL, null=True, blank=True
+    )
     total_price = models.PositiveIntegerField()
     total_discount = models.PositiveIntegerField()
     total_payment = models.PositiveIntegerField()
@@ -22,17 +28,18 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"{self.profile.user.email} - {self.status}"
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def get_items(self):
         return self.items.all()
-    
 
 
 class OrderItems(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name="items"
+    )
     product = models.ForeignKey('product.Products', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     color = models.CharField(max_length=100, default="بدون رنگ")
@@ -42,7 +49,3 @@ class OrderItems(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.quantity}"
-    
-
-    
-

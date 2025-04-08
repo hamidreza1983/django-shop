@@ -17,35 +17,93 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Status',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=20)),
             ],
         ),
         migrations.CreateModel(
             name='Cart',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('is_paid', models.BooleanField(default=False)),
                 ('total_price', models.PositiveIntegerField()),
                 ('total_discount', models.PositiveIntegerField()),
                 ('total_payment', models.PositiveIntegerField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='orders', to='accounts.profile')),
-                ('status', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='cart.status')),
+                (
+                    'profile',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='orders',
+                        to='accounts.profile',
+                    ),
+                ),
+                (
+                    'status',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to='cart.status',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='OrderItems',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('quantity', models.PositiveIntegerField(default=1)),
-                ('color', models.CharField(default='بدون رنگ', max_length=100)),
-                ('guarantee', models.CharField(default='بدون گارانتی', max_length=50)),
+                (
+                    'color',
+                    models.CharField(default='بدون رنگ', max_length=100),
+                ),
+                (
+                    'guarantee',
+                    models.CharField(default='بدون گارانتی', max_length=50),
+                ),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to='cart.cart')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.products')),
+                (
+                    'cart',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='items',
+                        to='cart.cart',
+                    ),
+                ),
+                (
+                    'product',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='product.products',
+                    ),
+                ),
             ],
         ),
     ]

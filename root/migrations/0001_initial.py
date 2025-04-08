@@ -9,17 +9,35 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='ContactUs',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('fullname', models.CharField(max_length=200)),
                 ('email', models.EmailField(max_length=254)),
-                ('phone', models.CharField(max_length=11, validators=[django.core.validators.RegexValidator(message='شماره موبایل باید با 0 شروع شود، شامل فقط اعداد باشد و 11 رقم داشته باشد.', regex='^0\\d{10}$')])),
+                (
+                    'phone',
+                    models.CharField(
+                        max_length=11,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message='شماره موبایل باید با 0 شروع شود، شامل فقط اعداد باشد و 11 رقم داشته باشد.',
+                                regex='^0\\d{10}$',
+                            )
+                        ],
+                    ),
+                ),
                 ('subject', models.CharField(max_length=200)),
                 ('message', models.TextField()),
             ],
@@ -27,7 +45,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Faq',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('question', models.CharField(max_length=200)),
                 ('answer', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
@@ -41,21 +67,61 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Skills',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('title', models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
             name='Team',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('fullname', models.CharField(max_length=200)),
                 ('description', models.TextField()),
-                ('image', models.ImageField(default='default.png', upload_to='', verbose_name='team')),
-                ('instagram', models.CharField(blank=True, max_length=200, null=True)),
-                ('facebook', models.CharField(blank=True, max_length=200, null=True)),
-                ('twitter', models.CharField(blank=True, max_length=200, null=True)),
-                ('skills', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='root.skills')),
+                (
+                    'image',
+                    models.ImageField(
+                        default='default.png',
+                        upload_to='',
+                        verbose_name='team',
+                    ),
+                ),
+                (
+                    'instagram',
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    'facebook',
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    'twitter',
+                    models.CharField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    'skills',
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to='root.skills',
+                    ),
+                ),
             ],
         ),
     ]

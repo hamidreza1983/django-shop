@@ -8,5 +8,7 @@ urlpatterns = [
     path('factor-view/', FactorView.as_view(), name='factor-view'),
     path('factors/', FactorsView.as_view(), name='factors'),
     path('verify/', VerifyView.as_view(), name='verify'),
-     path('verify/payment-accept/', PaymentAcceptView.as_view(), name='accept'),
+    path(
+        'verify/payment-accept/', PaymentAcceptView.as_view(), name='accept'
+    ),
 ]

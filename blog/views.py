@@ -4,13 +4,14 @@ from django.views.generic import (
     CreateView,
     FormView,
     ListView,
-    DetailView
+    DetailView,
 )
 from .models import Blog, BlogTags, Comment, Replay
 from .forms import *
 from accounts.models import Profile, User
 from django.contrib import messages
 from product.models import *
+
 
 class BlogView(ListView):
     template_name = 'blog/blog.html'
@@ -19,14 +20,21 @@ class BlogView(ListView):
 
     def get_queryset(self):
         if self.kwargs.get('tag'):
-            return Blog.objects.filter(tags__name=self.kwargs['tag'], status=True).order_by('-created_at')
+            return Blog.objects.filter(
+                tags__name=self.kwargs['tag'], status=True
+            ).order_by('-created_at')
         return Blog.objects.filter(status=True).order_by('-created_at')
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
-        context['most_views_product'] = Products.objects.filter(total_views__gte=0).order_by('-total_views')[:4]
+        context['most_views'] = Blog.objects.filter(status=True).order_by(
+            '-total_views'
+        )[:4]
+        context['most_views_product'] = Products.objects.filter(
+            total_views__gte=0
+        ).order_by('-total_views')[:4]
         return context
+
 
 class BlogDetataiView(DetailView):
     model = Blog
@@ -43,10 +51,15 @@ class BlogDetataiView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tags'] = BlogTags.objects.all()
-        context['most_views'] = Blog.objects.filter(status=True).order_by('-total_views')[:4]
-        context['most_views_product'] = Products.objects.filter(total_views__gte=0).order_by('-total_views')[:4]
+        context['most_views'] = Blog.objects.filter(status=True).order_by(
+            '-total_views'
+        )[:4]
+        context['most_views_product'] = Products.objects.filter(
+            total_views__gte=0
+        ).order_by('-total_views')[:4]
         return context
-    
+
+
 class CreateReplayView(FormView):
     form_class = ReplayForm
 
@@ -68,11 +81,14 @@ class CreateReplayView(FormView):
             replay.name = profile
             replay.email = email
             replay.save()
-            messages.success(request, 'پاسخ شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود')
+            messages.success(
+                request,
+                'پاسخ شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود',
+            )
             return redirect('blog:blog-details', pk=comment.blog.pk)
         else:
             return self.form_invalid(form)
-        
+
     def form_invalid(self, form):
         messages.error(self.request, 'خطا در ارسال پاسخ')
         return super().form_invalid(form)
@@ -99,11 +115,14 @@ class CreateCommentView(CreateView):
             comment.name = profile
             comment.email = email
             comment.save()
-            messages.success(request, 'کامنت شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود')
+            messages.success(
+                request,
+                'کامنت شما دریافت شد . در صورت تایید مدیر سایت نمایش داده می شود',
+            )
             return redirect('blog:blog-details', pk=blog.pk)
         else:
             return self.form_invalid(form)
-        
+
     def form_invalid(self, form):
         messages.error(self.request, 'خطا در ارسال کامنت')
         return super().form_invalid(form)

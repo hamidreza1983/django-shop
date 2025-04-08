@@ -6,3 +6,6 @@ django-mail-templated
 pillow
 jdatetime
 requests
+black
+black[d]
+flake8
