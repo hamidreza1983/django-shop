@@ -104,6 +104,7 @@ class LogOut(LoginRequiredMixin, TemplateView):
             'خروج از حساب کاربری با موفقیت انجام شد',
         )
         return redirect("/")
+    
 
 
 class ViewProfile(LoginRequiredMixin, TemplateView):
